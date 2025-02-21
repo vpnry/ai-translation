@@ -3,6 +3,7 @@
 Each chunk will respect the max_tokens limit for a LLM input and maintain original text structure.
 """
 
+import os
 import tiktoken
 
 
@@ -19,7 +20,8 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
     Args:
         text (str): The input text to be split
         max_tokens (int): Maximum number of tokens per chunk (default: 8000)
-        model (str): The model name to use for token counting (default: gpt-3.5-turbo)
+        model (str): The model name to use for token counting (default: gpt-3.5-turbo).
+        some others: "gpt-4o"
 
     Returns:
         str: Text split into XML chunks with preserved formatting
@@ -86,21 +88,37 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
         chunk_text = "\n".join(current_chunk)
         chunks.append(f"<chunk{chunk_number}>{chunk_text}</chunk{chunk_number}>")
 
-    return "\n\n".join(chunks)
+    return chunks
 
 
-def save_chunks(chunks, output_file):
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(chunks)
-    print(f"Saved {len(chunks)} chunks to {output_file}")
+def create_english_md(output_file_english):
+    if not os.path.exists(output_file_english):
+        with open(output_file_english, "w", encoding="utf-8") as f:
+            f.write(
+                "Translated with AI.\nIt can make mistakes, please check the original text\n\n---\n\n"
+            )
+        print(f"Created: {output_file_english} for English translation.")
 
 
-# Example usage
+def save_chunks(chunks: list, input_file: str):
+    chunked_text = "\n\n".join(chunks)
+    base, ext = os.path.splitext(input_file)
+    
+    output_xml_chunk = f"{base}_chunks.xml"
+    output_eng_md = f"{base}_English.md"
+    create_english_md(output_eng_md)
+
+    # if os.path.exists(output_xml_chunk):
+        # print(f"File already exists: {output_xml_chunk}")
+        # return
+
+    with open(output_xml_chunk, "w", encoding="utf-8") as f:
+        f.write(chunked_text)
+    print(f"Saved: {output_xml_chunk}.\nTHERE ARE {len(chunks)} chunks!")
+
+
 if __name__ == "__main__":
-
     input_file = "./015-Kaṅkhāvitaraṇī-aṭṭhakathā.md"
-    output_file = "015_chunk_pali.xml"
+    chunked_text = split_text_into_chunks(read_full_text(input_file))
 
-    full_text = read_full_text(input_file)
-    chunked_text = split_text_into_chunks(full_text)
-    save_chunks(chunked_text, output_file)
+    save_chunks(chunked_text, input_file)
