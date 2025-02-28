@@ -94,7 +94,7 @@ Run the script and follow the prompts to:
 After translation, check for missing lines using:  
 
 ```bash
-python3 check_translate.py your_text_file_chunks.xml
+python3 check_translate.py your_text_file_{number}_chunks.xml
 
 ```  
 
@@ -112,35 +112,13 @@ Finally, use **regex in VS Code** to remove line IDs after verification.
 
 ## 3. Generating Bilingual Files  
 
-To generate a bilingual markdown file, run the following command:  
+To generate bilingual and trilingual files, run the following command:
 
 ```bash
-python3 create_bilingual_md.py your_text_file_chunks.xml
+python3 create_bilingual_md_run_3.py your_text_file_{number}_chunks.xml
 ```
 
-### Adding a Second Translation (Recommended)  
-
-For better verification, you can add a second translation. The output will be as follows:  
-
-```text
-Source text
-
-Translation 1 (Grok-3 for example)
-
-Translation 2 (Gemini-2.0 for example)
-```
-
-### Steps to Add a Second Translation  
-
-1. **Manually create** a new file named `your_text_file_English_Gemini.md`.  
-2. **Use another LLM** (such as Gemini-2.0) to generate a second translation.  
-3. **Run the script again** to update the bilingual file:  
-
-```bash
-python3 create_bilingual_md.py your_text_file_chunks.xml
-```
-
-This ensures more accurate translations by comparing multiple LLM outputs.  
+It is highly recommended to produce trilingual translations, as this allows us to compare outputs from multiple Large Language Models (LLMs).
 
 ---
 
@@ -193,6 +171,7 @@ See [prompt_Sinhala_English.md](./prompt_Sinhala_English.md)
 
 - **[Claude](https://claude.ai/chats)**  
 - **[ChatGPT](https://chatgpt.com/)**  
+- **Qwen2.5-Max, Deepseek...**  
 
 For the latest **top-performing** models, check:  
 🔗 **[LM Arena Leaderboard](https://lmarena.ai/?leaderboard)**  
