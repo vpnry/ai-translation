@@ -4,7 +4,8 @@ This tool helps with AI-assisted translation by:
 
 - **`token_chunk_run_1.py`** – Splitting text into smaller chunks for AI translation  
 - **Numbering** each line or paragraph for easier reference  
-- **`check_translate.py`** – Verifying and checking translation results  
+- **`check_translate.py`** – Verifying and checking translation results
+- etc... 
 
 > ## ⚠ Warning  
 >
@@ -65,7 +66,7 @@ python3 token_chunk_run_1.py -d your_text_file_directory
 
 ```  
 
-This will generate two files (**do not** rename these files, they will be used in the next steps): 
+This will generate a few files (**do not** rename these files, they will be used in the next steps): 
 
 - **`your_text_file_{number}_chunks.xml`** – Chunked text with line IDs  
 - **`your_text_file_{number}_chunks_translated_1.xml`** – Where you paste translated text by AI 1 
@@ -100,15 +101,14 @@ python3 check_translate.py your_text_file_{number}_chunks.xml
 
 If any lines are missing, manually translate them and run the check again.  
 
-**WARNING: LLMs often merge stanzas together, which can result in missing IDs. In such cases, I usually correct them manually.** You can test the translation with these stanzas:  
+**WARNING: LLMs often merge stanzas (but not limited to only stanzas) together (often merged by meanings), which can result in missing IDs. In such cases, I usually have to correct them manually.** Example stanzas:  
 
 > ID958=‘‘Āpattidassanussāho, na kattabbo kudācanaṃ;  
 > ID959=Passissāmi anāpatti-miti kayirātha mānasaṃ.
 > 
 > ID960=‘‘Passitvāpi ca āpattiṃ, avatvāva punappunaṃ;  
 > ID961=Vīmaṃsitvātha viññūhi, saṃsanditvā ca taṃ vade.
-
-Finally, use **regex in VS Code** to remove line IDs after verification.  
+  
 
 ## 3. Generating Bilingual Files  
 
