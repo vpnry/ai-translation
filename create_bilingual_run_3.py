@@ -371,6 +371,12 @@ Code files for text processing: <span style="color: #0077ff;"><a href="https://g
         fo.write("</body></html>")
 
     print(f"Trilingual markdown created: {output_file_trilang}")
+    print(
+        f"\n\n** Done! To it convert into HTML:\npandoc {output_file_trilang} -o {str(output_file_trilang).replace('.md', '.html')} --toc --toc-depth=3"
+    )
+    print(
+        f"\n** And to add TOC: python3 addTOC.py {str(output_file_trilang).replace('.md', '.html')}\n"
+    )
 
 
 def main():
@@ -388,8 +394,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    print(
-        "\n** Done! To it convert into HTML: pandoc in.md -o out.html --toc --toc-depth=3"
-    )
-    print("** And to add TOC: python3 addToc.py out.html\n")

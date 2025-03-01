@@ -152,7 +152,7 @@ def save_chunks(chunks: list, input_file: str):
 
     print(f"\nTHERE ARE {len(chunks)} chunks!")
     print(
-        f"Run: chunk_copier_run_2.py to help you copy each of these {len(chunks)} chunks (with the system prompt) faster."
+        f"Run: chunk_copier_run_2.py to help you copy each of these {len(chunks)} chunks with the system prompt faster."
     )
 
 

@@ -24,9 +24,7 @@ def extract_ids_from_translated_file(md_file: str) -> set:
     return set(map(int, re.findall(id_pattern, content)))
 
 
-def check_translation_completeness(
-    xml_source_file: str, xml_translated_file: str
-) -> bool:
+def check_translation_completeness(xml_source_file: str, xml_translated_file: str) -> bool:
     """
     Check if all IDs from XML chunks exist in the English translation.
     Returns True if all IDs are present, False otherwise.
@@ -61,22 +59,20 @@ def main():
         description="Check if all lines from XML chunks are translated in English.md"
     )
     parser.add_argument(
-        "xml_source_file",
-        type=str,
-        help="Path to the source XML chunks file (e.g., file_chunks_2000.xml)",
+        "xml_source_file", 
+        type=str, 
+        help="Path to the source XML chunks file (e.g., file_chunks_2000.xml)"
     )
     parser.add_argument(
-        "xml_translated_file",
-        type=str,
-        help="Path to the translated file (e.g., chunks_2000_tranlated_1.xml)",
+        "xml_translated_file", 
+        type=str, 
+        help="Path to the translated file (e.g., chunks_2000_tranlated_1.xml)"
     )
 
     args = parser.parse_args()
 
     try:
-        if not check_translation_completeness(
-            args.xml_source_file, args.xml_translated_file
-        ):
+        if not check_translation_completeness(args.xml_source_file, args.xml_translated_file):
             sys.exit(1)
     except Exception as e:
         print(f"Error: {str(e)}")
