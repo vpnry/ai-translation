@@ -1,1 +1,0 @@
-Translate the the provided Sinhala text chunks from the Buddhist commentary text of the *Sāsanāvataraṇaya* book into English, adhering strictly to the guidelines you outlined. Each chunk is translated in full, preserving Pali terms in Roman script, maintaining the original tone and markdown format, and using consistent terminology for key Theravada Buddhist concepts.

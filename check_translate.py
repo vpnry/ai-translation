@@ -4,23 +4,23 @@ import sys
 from pathlib import Path
 
 
-def extract_ids_from_xml(xml_file: str) -> set:
+def extract_ids_from_source_xml(xml_file: str) -> set:
     """Extract all ID numbers from the XML chunks file."""
     with open(xml_file, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Find all instances of ID{number}= in the text
-    id_pattern = r"ID(\d+)="
+    # Find all instances of <line id="number"> in the text
+    id_pattern = r'<line id="(\d+)">'
     return set(map(int, re.findall(id_pattern, content)))
 
 
-def extract_ids_from_md(md_file: str) -> set:
+def extract_ids_from_translated_file(md_file: str) -> set:
     """Extract all ID numbers from the English markdown file."""
     with open(md_file, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Find all instances of ID{number}= in the text
-    id_pattern = r"ID(\d+)="
+    # Find all instances of <line id="number"> in the text
+    id_pattern = r'<line id="(\d+)">'
     return set(map(int, re.findall(id_pattern, content)))
 
 
@@ -33,11 +33,11 @@ def check_translation_completeness(xml_source_file: str, xml_translated_file: st
         print(f"Error: Translation file not found: {xml_translated_file}")
         return False
 
-    xml_ids = extract_ids_from_xml(xml_source_file)
-    md_ids = extract_ids_from_md(xml_translated_file)
+    source_xml_ids = extract_ids_from_source_xml(xml_source_file)
+    translated_ids = extract_ids_from_translated_file(xml_translated_file)
 
     # Find missing IDs
-    missing_ids = xml_ids - md_ids
+    missing_ids = source_xml_ids - translated_ids
 
     if missing_ids:
         print(f"❌ Missing translations for {len(missing_ids)} lines:")
@@ -45,12 +45,12 @@ def check_translation_completeness(xml_source_file: str, xml_translated_file: st
         return False
 
     # Find extra IDs in MD that don't exist in XML
-    extra_ids = md_ids - xml_ids
+    extra_ids = translated_ids - source_xml_ids
     if extra_ids:
         print(f"⚠️ Warning: Found {len(extra_ids)} extra IDs in translation file:")
         print(f"Extra IDs: {sorted(extra_ids)}")
 
-    print(f"✅ All {len(xml_ids)} lines are translated!")
+    print(f"✅ All {len(source_xml_ids)} lines are translated!")
     return True
 
 

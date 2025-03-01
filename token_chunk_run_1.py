@@ -44,7 +44,7 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
 
     for line in text.split("\n"):
         if line.strip():
-            current_paragraph.append(f"\nID{line_counter}={line}")
+            current_paragraph.append(f'\n<line id="{line_counter}">{line.strip()}</line>')
             line_counter += 1
         else:
             if current_paragraph:

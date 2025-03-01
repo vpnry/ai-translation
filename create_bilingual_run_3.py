@@ -5,8 +5,9 @@ from pathlib import Path
 
 
 def extract_id_and_text(line):
-    """Extract ID and text from a line containing ID{number}="""
-    match = re.match(r"ID(\d+)=\s*(.*)", line.strip())
+    """Extract ID and text from a line tag with id attribute"""
+    # Match line tag format: <line id="(\d+)">(.*?)</line>
+    match = re.match(r'<line id="(\d+)">(.*?)</line>', line.strip())
     if match:
         return int(match.group(1)), match.group(2)
     return None, None
@@ -54,7 +55,7 @@ def create_bilingual_md(source_file):
             id_num, text = extract_id_and_text(line)
             if id_num:
                 source_lines[id_num] = text.strip()
-    print(f"Source total IDs: {len(source_lines.keys())}")
+    print(f"Source total line IDs: {len(source_lines.keys())}")
 
     # Read target file 1
     try:
@@ -66,7 +67,7 @@ def create_bilingual_md(source_file):
     except FileNotFoundError:
         print(f"Warning: Translated file 1 {target_file} not found")
         return
-    print(f"Translated file 1 total IDs: {len(target_lines.keys())}")
+    print(f"Translated file 1 total line IDs: {len(target_lines.keys())}")
 
     # Check for missing translated IDs in the translated file 1
     for id_num in source_lines:
@@ -199,7 +200,7 @@ def create_trilingual_md(source_file):
             if id_num:
                 source_lines[id_num] = text.strip()
 
-    print(f"Source total IDs: {len(source_lines.keys())}")
+    print(f"Source total line IDs: {len(source_lines.keys())}")
 
     # Read target file 1
     try:
