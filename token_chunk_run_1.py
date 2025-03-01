@@ -44,7 +44,9 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
 
     for line in text.split("\n"):
         if line.strip():
-            current_paragraph.append(f'\n<line id="{line_counter}">{line.strip()}</line>')
+            current_paragraph.append(
+                f'\n<line id="{line_counter}">{line.strip()}</line>'
+            )
             line_counter += 1
         else:
             if current_paragraph:
@@ -147,9 +149,11 @@ def save_chunks(chunks: list, input_file: str):
     create_english_md(output_translated_f1)
     create_english_md(output_translated_f2)
     create_english_md(output_translated_f3)
-    
+
     print(f"\nTHERE ARE {len(chunks)} chunks!")
-    print(f"Run: chunk_copier_run_2.py to help you copy each of these {len(chunks)} chunks with the system prompt faster.")
+    print(
+        f"Run: chunk_copier_run_2.py to help you copy each of these {len(chunks)} chunks (with the system prompt) faster."
+    )
 
 
 def process_directory(
