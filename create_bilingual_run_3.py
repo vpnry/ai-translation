@@ -40,7 +40,7 @@ def create_bilingual_md(source_file):
     base_name = source_path.stem
 
     print(base_name)
-    target_file = source_path.parent / f"{base_name}_tranlated_1.xml"
+    target_file = source_path.parent / f"{base_name}_translated_1.xml"
     output_file = source_path.parent / f"{base_name}_bilingual.md"
 
     # Read source and target files
@@ -177,9 +177,9 @@ def create_trilingual_md(source_file):
     output_file_trilang = source_path.parent / f"{base_name}_trilingual.md"
 
     # translated files
-    translated_file_1 = source_path.parent / f"{base_name}_tranlated_1.xml"
-    translated_file_2 = source_path.parent / f"{base_name}_tranlated_2.xml"
-    translated_file_3 = source_path.parent / f"{base_name}_tranlated_3.xml"
+    translated_file_1 = source_path.parent / f"{base_name}_translated_1.xml"
+    translated_file_2 = source_path.parent / f"{base_name}_translated_2.xml"
+    translated_file_3 = source_path.parent / f"{base_name}_translated_3.xml"
 
     # Read source and target files
     source_lines = {}
