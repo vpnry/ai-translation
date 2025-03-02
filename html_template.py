@@ -27,7 +27,7 @@ def generate_title_section(base_name: str, num_translations: int) -> str:
     """Generate title section with translations info"""
     translations = "\n".join(
         [
-            f'<p style="color: #444; font-size: 14px; margin: 8px 0;">Translation {i}: <span style="color: #006400;">AI {i}</span> (DD MM YYYY)</p>'
+            f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">Translation {i}: <span style="color: #006400;">AI {i}</span> (DD MM YYYY)</p>'
             for i in range(1, num_translations + 1)
         ]
     )
