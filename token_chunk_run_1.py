@@ -6,6 +6,7 @@ Each chunk will respect the max_tokens limit for a LLM input and maintain origin
 import os
 import tiktoken  # pip install tiktoken
 import argparse
+import re
 
 
 def read_full_text(file_path):
@@ -27,6 +28,7 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
     Returns:
         str: Text split into XML chunks with preserved formatting
     """
+    print(f"Using max tokens: {max_tokens}")
     # Initialize the tokenizer
     enc = tiktoken.encoding_for_model(model)
 
@@ -83,9 +85,10 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
             and current_chunk
         ):
             # Join the current chunk and add XML tags with numbered end marker
-            chunk_text = "\n".join(current_chunk).replace(
-                "\n\n\n", "\n\n"
-            )  # Replace triple with double newlines
+            chunk_text = "\n".join(current_chunk)
+            # Replace 3 or more newlines with double newlines (esp. sinhala atta)
+            chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
+
             chunks.append(
                 f"<chunk{chunk_number}>\n{chunk_text}{get_end_marker(chunk_number)}\n</chunk{chunk_number}>"
             )
@@ -105,9 +108,9 @@ def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
 
     # Handle the last chunk
     if current_chunk:
-        chunk_text = "\n".join(current_chunk).replace(
-            "\n\n\n", "\n\n"
-        )  # Replace triple with double newlines
+        chunk_text = "\n".join(current_chunk)
+        # Replace 3 or more newlines with double newlines
+        chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
 
         chunks.append(
             f"<chunk{chunk_number}>\n{chunk_text}{get_end_marker(chunk_number)}\n</chunk{chunk_number}>"
@@ -132,23 +135,26 @@ def create_english_md(output_file_english):
 
 
 def save_chunks(chunks: list, input_file: str):
-    chunked_text = "\n\n".join(chunks)
+    chunk_text = "\n\n".join(chunks)
+    
+    # Replace 3 or more newlines with double newlines
+    chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
     base, ext = os.path.splitext(input_file)
 
     # Include token count in filenames
     output_base_chunk = f"{base}_{len(chunks)}_chunks"
     output_xml_chunk = f"{output_base_chunk}.xml"
-    output_translated_f1 = f"{output_base_chunk}_translated_1.xml"
-    output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
-    output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
 
     with open(output_xml_chunk, "w", encoding="utf-8") as f:
-        f.write(chunked_text)
+        f.write(chunk_text)
     print(f"Saved: {output_xml_chunk}!")
 
-    create_english_md(output_translated_f1)
-    create_english_md(output_translated_f2)
-    create_english_md(output_translated_f3)
+    # output_translated_f1 = f"{output_base_chunk}_translated_1.xml"
+    # output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
+    # output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
+    # create_english_md(output_translated_f1)
+    # create_english_md(output_translated_f2)
+    # create_english_md(output_translated_f3)
 
     print(f"\nTHERE ARE {len(chunks)} chunks!")
     print(
@@ -177,16 +183,20 @@ def process_directory(
         print(f"No .txt files found in '{dir_path}'")
         return
 
+    total_chunks_in_dir = 0
     for n, txt_file in enumerate(txt_files, 1):
         file_path = os.path.join(dir_path, txt_file)
         print(f"\n{n}/{len(txt_files)}. Processing: {txt_file}")
+        
         try:
             chunked_text = split_text_into_chunks(
                 read_full_text(file_path), max_tokens=max_tokens, model=model
             )
-            save_chunks(chunked_text, file_path, max_tokens)
+            save_chunks(chunked_text, file_path)
+            total_chunks_in_dir += len(chunked_text)
         except Exception as e:
             print(f"Error processing {txt_file}: {str(e)}")
+    print(f"\n** Total chunks in directory: {total_chunks_in_dir}")
 
 
 if __name__ == "__main__":
@@ -206,8 +216,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=8000,
-        help="Maximum tokens per chunk (default: 8000)",
+        default=6000, # sinhala can use 10000, pali 6000
+        help="Maximum tokens per chunk (default: 6000)",
     )
     parser.add_argument(
         "--model",

@@ -45,7 +45,9 @@ LLM models have input limits, so large texts must be **split into smaller chunks
 ```bash
 python3 -m venv .venv   
 source .venv/bin/activate
-pip install tiktoken pyperclip # for chunk_copier_run_2.py
+
+pip install tiktoken pyperclip google-genai bs4 lxml prompt_toolkit
+
 ```  
 
 ### Chunking the Text:  
