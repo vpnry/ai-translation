@@ -1,6 +1,9 @@
 """HTML template for Titpitakapali.org dictionary and TOC """
 
 
+
+# Use #RRGGBB color codes for colors so that the Microsoft Words can convert them to the correct color
+
 def generate_html_header(base_name: str) -> str:
     """Generate common HTML header"""
     return f"""<html lang="en">
@@ -8,12 +11,7 @@ def generate_html_header(base_name: str) -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{base_name}</title>
-<style>
-body {{font-size: medium; font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;}}
-.s1 {{text-align: left;border-left: 8px solid rgba(160, 82, 45, 0.5); padding-left: 5px;background:linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);}}
-.t1 {{ text-align: justify;padding-left: 6px; border-left: 5px solid #ce93d8;border-radius: 10px; }}  /* Brown */.t2 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(70, 130, 180, 0.5);border-radius: 10px; }} /* Steel Blue */.t3 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(34, 139, 34, 0.5);border-radius: 10px; }}  /* Forest Green */.t4 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(255, 165, 0, 0.5);border-radius: 10px; }}  /* Orange */.t5 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(128, 0, 128, 0.5);border-radius: 10px; }}  /* Purple */.t6 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(255, 0, 0, 0.5);border-radius: 10px; }}    /* Red */.t7 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(0, 0, 255, 0.5);border-radius: 10px; }}    /* Blue */.t8 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(255, 20, 147, 0.5);border-radius: 10px; }} /* Deep Pink */.t9 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(0, 255, 255, 0.5);border-radius: 10px; }}  /* Cyan */.t10 {{ text-align: justify;padding-left: 6px; border-left: 5px solid rgba(255, 255, 0, 0.5); }} /* Yellow */
-a {{text-decoration: none;}}
-</style>
+<style>body {{font-size: medium; font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;}}.s1 {{     text-align: left;     border-left: 8px solid #7c6154;     padding-left: 5px;     background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent); }}.t1 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #ce93d8; border-radius: 10px; }}  .t2 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #90caf9; border-radius: 10px; }} .t3 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #e57373; border-radius: 10px; }} .t4 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #ffe082; border-radius: 10px; }} .t5 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #a5d6a7; border-radius: 10px; }} .t6 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #ffa700; border-radius: 10px; }} .t7 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #ff1493; border-radius: 10px; }} .t8 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #00ffff; border-radius: 10px; }}  .t9 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #800080; border-radius: 10px; }} .t10 {{ text-align: justify; padding-left: 6px; border-left: 5px solid #ffff00; }} a {{ text-decoration: none; }}</style>
 <link href="https://tipitakapali.org/web/tp.css" rel="stylesheet" />
 <script src="https://tipitakapali.org/web/theme.js"></script>
 </head>
@@ -49,10 +47,3 @@ def generate_html_footer() -> str:
     """Generate common HTML header"""
     return """<script defer="" src="https://tipitakapali.org/web/paliscriptconverter_edited.js"></script><script defer="" src="https://tipitakapali.org/web/handleClick.js"></script><script defer="" src="https://tipitakapali.org/web/renderer.js"></script>
 </body></html>"""
-
-
-if __name__ == "__main__":
-    check_fix_unclosed_tag(
-        "zzza/Vinayasaṅgaha-aṭṭhakathā_204_chunks_translated_4.xml",
-        "zzza/Vinayasaṅgaha-aṭṭhakathā_204_chunks_translated_4.xml",
-    )
