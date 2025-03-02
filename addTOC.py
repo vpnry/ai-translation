@@ -1,4 +1,5 @@
-# addTOC.py
+"""This script adds a Table of Contents (TOC like the tipitakapali.org) to an HTML file. To be used with HTML files that have headings with IDs."""
+
 from bs4 import BeautifulSoup
 import re
 

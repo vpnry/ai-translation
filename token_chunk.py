@@ -14,14 +14,14 @@ def read_full_text(file_path):
         return file.read()
 
 
-def split_text_into_chunks(text, max_tokens=8000, model="gpt-3.5-turbo"):
+def split_text_into_chunks(text, max_tokens=6000, model="gpt-3.5-turbo"):
     """
     Split text into chunks with XML tags while preserving paragraph breaks and natural segments.
     Each chunk will respect the max_tokens limit and maintain original text structure.
 
     Args:
         text (str): The input text to be split
-        max_tokens (int): Maximum number of tokens per chunk (default: 8000)
+        max_tokens (int): Maximum number of tokens per chunk (default: 6000)
         model (str): The model name to use for token counting (default: gpt-3.5-turbo).
         some others: "gpt-4o"
 
@@ -136,7 +136,7 @@ def create_english_md(output_file_english):
 
 def save_chunks(chunks: list, input_file: str):
     chunk_text = "\n\n".join(chunks)
-    
+
     # Replace 3 or more newlines with double newlines
     chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
     base, ext = os.path.splitext(input_file)
@@ -149,12 +149,12 @@ def save_chunks(chunks: list, input_file: str):
         f.write(chunk_text)
     print(f"Saved: {output_xml_chunk}!")
 
-    # output_translated_f1 = f"{output_base_chunk}_translated_1.xml"
-    # output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
-    # output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
-    # create_english_md(output_translated_f1)
-    # create_english_md(output_translated_f2)
-    # create_english_md(output_translated_f3)
+    output_translated_f1 = f"{output_base_chunk}_translated_1.xml"
+    output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
+    output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
+    create_english_md(output_translated_f1)
+    create_english_md(output_translated_f2)
+    create_english_md(output_translated_f3)
 
     print(f"\nTHERE ARE {len(chunks)} chunks!")
     print(
@@ -163,14 +163,14 @@ def save_chunks(chunks: list, input_file: str):
 
 
 def process_directory(
-    dir_path: str, max_tokens: int = 8000, model: str = "gpt-3.5-turbo"
+    dir_path: str, max_tokens: int = 6000, model: str = "gpt-3.5-turbo"
 ):
     """
     Process all .txt files in the specified directory.
 
     Args:
         dir_path (str): Path to the directory containing .txt files
-        max_tokens (int): Maximum tokens per chunk (default: 8000)
+        max_tokens (int): Maximum tokens per chunk (default: 6000)
         model (str): Model name for token counting (default: gpt-3.5-turbo)
     """
     if not os.path.exists(dir_path):
@@ -187,7 +187,7 @@ def process_directory(
     for n, txt_file in enumerate(txt_files, 1):
         file_path = os.path.join(dir_path, txt_file)
         print(f"\n{n}/{len(txt_files)}. Processing: {txt_file}")
-        
+
         try:
             chunked_text = split_text_into_chunks(
                 read_full_text(file_path), max_tokens=max_tokens, model=model
@@ -216,8 +216,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=6000, # sinhala can use 10000, pali 6000
-        help="Maximum tokens per chunk (default: 6000)",
+        default=6000,  # sinhala can use 10000, pali 6000
+        help="Maximum tokens per chunk (default: 6000), can adjust according to your LLMs",
     )
     parser.add_argument(
         "--model",

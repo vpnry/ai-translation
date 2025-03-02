@@ -1,3 +1,8 @@
+"""Converts JSON files containing Sinhala text to Markdown format.
+The JSON files:
+https://github.com/pathnirvana/tipitaka.lk/tree/master/public/static/text
+"""
+
 import json
 import os
 import sys

@@ -1,3 +1,5 @@
+"""This script uses Google's Gemini AI to translate XML files with chunks of text."""
+
 from google import genai # pip install google-genai
 from google.genai import types
 
@@ -25,7 +27,7 @@ MAX_RETRY_DELAY = 32
 # Gemini 2.0 Flash-Lite	30	1,000,000	1,500
 # Gemini 2.0 Pro Experimental 02-05	2	1,000,000	50
 
-
+# get a free API key from here https://aistudio.google.com/apikey
 def read_gemini_api_key(key_file="gemini_key.txt"):
     with open(key_file, "r") as file:
         return file.read().strip()
@@ -184,7 +186,7 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
         print(f"Error processing file: {e}")
 
 
-def translate_this_file(input_xml: str):
+def gemini_translator(input_xml: str):
     process_xml_file_with_regex(input_xml)
 
 
@@ -212,4 +214,4 @@ if __name__ == "__main__":
         print(f"Error: Input file '{args.input_file}' does not exist")
         exit(1)
 
-    translate_this_file(args.input_file)
+    gemini_translator(args.input_file)

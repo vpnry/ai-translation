@@ -1,19 +1,24 @@
-from translator_gemini import translate_this_file
+"""Translate files matching a pattern in a specified directory using the Gemini API."""
+
 import os
 import argparse
 import fnmatch
 import re
 
+from translator_gemini import gemini_translator
+
+
 def count_chunks(file_path):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
             # Find all occurrences of <chunk{number}> tags
-            chunks = re.findall(r'<chunk\d+>', content)
+            chunks = re.findall(r"<chunk\d+>", content)
             return len(chunks)
     except Exception as e:
         print(f"Error counting chunks in {file_path}: {str(e)}")
         return 0
+
 
 def process_files(directory=".", file_pattern="*_chunks.xml"):
     print(f"Using file filter pattern: {file_pattern}")
@@ -35,11 +40,12 @@ def process_files(directory=".", file_pattern="*_chunks.xml"):
     print(f"\nTotal matching files: {len(matching_files)}")
     print(f"Total chunks across all files: {total_chunks}\n")
 
-
     # Ask for user confirmation
-    print(f"Reminder: Free Gemini API call limit is 1,500 requests per day. This session will use ~ {total_chunks} requests")
+    print(
+        f"Reminder: Free Gemini API call limit is 1,500 requests per day. This session will use ~ {total_chunks} requests"
+    )
     response = input("Do you want to proceed with translation? (y/n): ").lower().strip()
-    if response != 'y':
+    if response != "y":
         print("Translation cancelled by user.")
         return
 
@@ -52,7 +58,7 @@ def process_files(directory=".", file_pattern="*_chunks.xml"):
     for n, file_path in enumerate(matching_files, 1):
         try:
             print(f"Processing file: {file_path}")
-            translate_this_file(os.path.join(directory, file_path))
+            gemini_translator(os.path.join(directory, file_path))
             print(f"{n}/{len(matching_files)}. Translated: {file_path}\n")
 
         except Exception as e:

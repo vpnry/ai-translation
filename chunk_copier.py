@@ -1,3 +1,5 @@
+"""Utility that helps process and copy XML-style chunks of text with a system prompt to the clipboard. It will save your time by copying chunks in batches and opening a specified website after each batch."""
+
 import pyperclip
 import webbrowser
 import re

@@ -1,11 +1,21 @@
+## Atthakatha sinhala
+error.txt 
+
+markdown_sinh_attha/
+# atthakatha_text_sinh/
+# atthakatha_json/
+deleteme*.py
+gemini_key.txt
+key.txt
+error.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
 .venv/
+dev_test/
 
-015-AI_Translation.md
 
 # C extensions
 *.so
