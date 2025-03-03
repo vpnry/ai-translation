@@ -59,7 +59,7 @@ python3 -m venv .venv
 
 source .venv/bin/activate
 
-pip install tiktoken pyperclip google-genai bs4 lxml prompt_toolkit
+pip install tiktoken pyperclip google-genai bs4 lxml prompt_toolkit ratelimit
 
 
 ```

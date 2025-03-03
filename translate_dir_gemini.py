@@ -26,8 +26,8 @@ def process_files(directory=".", file_pattern="*_chunks.xml"):
     # Get all files in the specified directory
     all_files = os.listdir(directory)
 
-    # Filter files matching the pattern using fnmatch
-    matching_files = [f for f in all_files if fnmatch.fnmatch(f, file_pattern)]
+    # Filter files matching the pattern using fnmatch and sort them
+    matching_files = sorted([f for f in all_files if fnmatch.fnmatch(f, file_pattern)])
 
     # Print the filtered list and count chunks
     print("\nMatching files found:")

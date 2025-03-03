@@ -1,8 +1,7 @@
 """HTML template for Titpitakapali.org dictionary and TOC """
 
-
-
 # Use #RRGGBB color codes for colors so that the Microsoft Words can convert them to the correct color
+
 
 def generate_html_header(base_name: str) -> str:
     """Generate common HTML header"""
@@ -47,3 +46,37 @@ def generate_html_footer() -> str:
     """Generate common HTML header"""
     return """<script defer="" src="https://tipitakapali.org/web/paliscriptconverter_edited.js"></script><script defer="" src="https://tipitakapali.org/web/handleClick.js"></script><script defer="" src="https://tipitakapali.org/web/renderer.js"></script>
 </body></html>"""
+
+
+import re
+
+
+def join_lines_in_tags(input_file, output_file):
+    """Fix ChatGPT auto add linebreak"""
+    try:
+        with open(input_file, "r", encoding="utf-8") as infile:
+            content = infile.read()
+        pattern = r'(<line id="\d+">)(.*?)(</line>)'
+
+        def join_lines(match):
+            opening_tag = match.group(1)  # <line id="number">
+            content = match.group(2)  # Content between tags
+            closing_tag = match.group(3)  # </line>
+            # Join lines within this tag with spaces
+            joined_content = " ".join(
+                line.strip() for line in content.split("\n") if line.strip()
+            )
+            return f"{opening_tag}{joined_content}{closing_tag}"
+
+        # Replace all matches with joined content
+        output_content = re.sub(pattern, join_lines, content, flags=re.DOTALL)
+
+        with open(output_file, "w", encoding="utf-8") as outfile:
+            outfile.write(output_content)
+
+        print(f"Successfully processed file. Output written to {output_file}")
+
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_file}' not found")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")

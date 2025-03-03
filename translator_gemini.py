@@ -117,6 +117,17 @@ def gemini_translate(chunk):
 
 def process_xml_file_with_regex(input_file, transno="translated_1"):
     try:
+        # Check if file is already translated
+        source_path = Path(input_file)
+        base_name = source_path.stem
+        
+        # Look for existing translations with the same base name and AI model
+        existing_translations = list(source_path.parent.glob(f"{base_name}_*_{AI_MODEL}.xml"))
+        if existing_translations:
+            print(f"------> SKIPPING {input_file} - SEEMS THAT THERE IS A translated FILE FOR:")
+            for trans in existing_translations:
+                print(f"  {trans.name}")
+            return
 
         with open(input_file, "r", encoding="utf-8") as file:
             content = file.read()
@@ -129,8 +140,6 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
         print(f"Found {total_chunks} chunks to translate")
 
         # Create output file
-        source_path = Path(input_file)
-        base_name = source_path.stem
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         output_file = source_path.parent / f"{base_name}_{timestamp}_{AI_MODEL}.xml"
