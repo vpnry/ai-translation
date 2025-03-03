@@ -1,12 +1,11 @@
 ## Atthakatha sinhala
 error.txt 
 
-markdown_sinh_attha/
+# markdown_sinh_attha/
 # atthakatha_text_sinh/
 # atthakatha_json/
 deleteme*.py
-gemini_key.txt
-key.txt
+gemini_key*.txt
 error.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -15,6 +14,7 @@ __pycache__/
 
 .venv/
 dev_test/
+dev/
 
 
 # C extensions

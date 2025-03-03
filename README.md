@@ -181,7 +181,7 @@ Translate chunks sequentially using the **system prompts**:
 
 - **[Claude](https://claude.ai/chats)**
 - **[ChatGPT](https://chatgpt.com/)**
-- **Qwen2.5-Max, Deepseek, etc.**
+- **Deepseek, etc.**
 
 For the latest top-performing models, check:
 🔗 **[LM Arena Leaderboard](https://lmarena.ai/?leaderboard)**

@@ -1,9 +1,8 @@
 """This script uses Google's Gemini AI to translate XML files with chunks of text."""
 
-from google import genai # pip install google-genai
+from google import genai  # pip install google-genai
 from google.genai import types
 
-import xml.etree.ElementTree as ET
 import time
 from datetime import datetime
 from ratelimit import limits, sleep_and_retry  # pip install ratelimit
@@ -13,33 +12,38 @@ import argparse
 from functools import wraps
 import random
 
-# Add these constants at the top with other constants
-MAX_RETRIES = 5
-INITIAL_RETRY_DELAY = 1
-MAX_RETRY_DELAY = 32
-
 
 # Configure Gemini
 # https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
-# free tier:
+# free tier per project per day:
 # Model	RPM	TokenPM	RequestPDay
 # Gemini 2.0 Flash	15	1,000,000	1,500
 # Gemini 2.0 Flash-Lite	30	1,000,000	1,500
 # Gemini 2.0 Pro Experimental 02-05	2	1,000,000	50
 
-# get a free API key from here https://aistudio.google.com/apikey
-def read_gemini_api_key(key_file="gemini_key.txt"):
+
+GEMINI_API_PROJECT_KEY = "./gemini_key_project_1.txt"
+AI_MODEL = "gemini-2.0-flash"  # "gemini-2.0-pro-exp"
+CALLS_PER_MINUTE = 14  # max 15 requests per minute, here use 14
+PERIOD = 60
+
+# Re-tries configures
+MAX_RETRIES = 8
+INITIAL_RETRY_DELAY = 10
+MAX_RETRY_DELAY = 1280
+
+
+def read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY):
+    # get a (free) API key from here https://aistudio.google.com/apikey
+    print(f"Using key from: {key_file}")
     with open(key_file, "r") as file:
         return file.read().strip()
 
 
-AI_MODEL = "gemini-2.0-flash"
-# 15 requests per minute
-CALLS_PER_MINUTE = 14
-PERIOD = 60
+client = genai.Client(api_key=read_gemini_api_key())
 
 
-# safety settings
+# Gemini safety settings
 # https://ai.google.dev/gemini-api/docs/safety-settings
 GEMINI_SAFE_SETTINGS = [
     types.SafetySetting(
@@ -65,10 +69,6 @@ GEMINI_SAFE_SETTINGS = [
 ]
 
 
-GOOGLE_API_KEY = read_gemini_api_key()
-client = genai.Client(api_key=GOOGLE_API_KEY)
-
-
 def load_sytem_prompt(prompt_file="./prompt_Sinhala_English.md"):
     with open(prompt_file, "r", encoding="utf-8") as file:
         return file.read()
@@ -86,17 +86,21 @@ def retry_with_exponential_backoff(func):
                 if retry_count == MAX_RETRIES:
                     print(f"Final attempt failed: {str(e)}")
                     return None
-                
+
                 # Calculate delay with jitter
-                delay = min(INITIAL_RETRY_DELAY * (2 ** (retry_count - 1)), MAX_RETRY_DELAY)
+                delay = min(
+                    INITIAL_RETRY_DELAY * (2 ** (retry_count - 1)), MAX_RETRY_DELAY
+                )
                 jitter = random.uniform(0, 0.1 * delay)  # 10% jitter
                 total_delay = delay + jitter
-                
+
                 print(f"Attempt {retry_count} failed: {str(e)}")
                 print(f"Retrying in {total_delay:.2f} seconds...")
                 time.sleep(total_delay)
         return None
+
     return wrapper
+
 
 @sleep_and_retry
 @limits(calls=CALLS_PER_MINUTE, period=PERIOD)
@@ -120,9 +124,11 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
         # Check if file is already translated
         source_path = Path(input_file)
         base_name = source_path.stem
-        
+
         # Look for existing translations with the same base name and AI model
-        existing_translations = list(source_path.parent.glob(f"{base_name}_*_{AI_MODEL}.xml"))
+        existing_translations = list(
+            source_path.parent.glob(f"{base_name}_*_{AI_MODEL}.xml")
+        )
         if existing_translations:
             print(f"------> SKIPPING {input_file} - THERE IS A translated FILE here:")
             for trans in existing_translations:
@@ -170,7 +176,7 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
                     # Handle None returns from translation
                     if translated_text is None:
                         log_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        error_message = f"Chunk {i}: FAILED at {log_time}. Translation returned None after all retries.\n"
+                        error_message = f"Chunk {i}: CHUNK_FAILED at {log_time}. Translation returned None after all retries.\n"
                         print(error_message.strip())
                         log_f.write(error_message)
                         # Write original text instead of translation
@@ -185,7 +191,7 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
                         log_message = f"Chunk {i}: is written at {log_time}. Took: {elapsed_time:.2f}s. Translated chars/input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
                         print(log_message.strip())
                         log_f.write(log_message)
-                    
+
                     log_f.flush()
 
         print(f"Translation completed. Output saved to {output_file}")

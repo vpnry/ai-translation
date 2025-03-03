@@ -42,7 +42,7 @@ def process_files(directory=".", file_pattern="*_chunks.xml"):
 
     # Ask for user confirmation
     print(
-        f"Reminder: Free Gemini API call limit is 1,500 requests per day. This session will use ~ {total_chunks} requests"
+        f"Reminder: Free tier Gemini API call limit is 1,500 requests/per project/ per day. This session will use ~ {total_chunks} requests of your project limit."
     )
     response = input("Do you want to proceed with translation? (y/n): ").lower().strip()
     if response != "y":
@@ -87,4 +87,4 @@ if __name__ == "__main__":
 
     print(f"Starting translation of files in {args.directory}...")
     process_files(args.directory, args.pattern)
-    print("Translation process completed!")
+    print("Translation tasks completed!\nPlease search 'CHUNK_FAILED' in the log files to see any failed chunks")
