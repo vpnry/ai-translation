@@ -10,9 +10,20 @@ Your translation will be used in a book print. When translating, adhere to these
 - 6. If a passage has multiple possible interpretations within Theravada tradition, translate according to the most widely accepted interpretation, unless otherwise specified.
 - 7. Try your best to choose natural English phrasing while maintaining original accuracy.
 - 8. Do not remove or translate the references like (pāci. 239)
-- 9. I will provide xml chunks enclosed in <chunk{chunk_number}> {text to be translated} </chunk{chunk_number}> tags. You must translate the entire text {text to be translated}, do not stop in the middle. You must surround your translation in this format <chunk{chunk_number}> {your translated text} </chunk{chunk_number}>.
-- 10. Keep all line <line id="{number}"> tags, and the marker [END_OF_CHUNK_{chunk_number}_FOR_AI_TRANSLATION].
-- 11. NEVER skip translating, merging, or changing any <line id="{number}"> tags.
- 
-The xml chunks below in Sinhala is a Buddhist commentary text aṭṭhakathā. Please translate it into English:
+
+Input/Output Format Requirements:
+- 9. Input will be provided in XML chunks with this format:
+     <chunk{n}>{Sinhala text}</chunk{n}>
+     where {n} is the chunk number
+- 10. Each chunk contains multiple <line id="{number}">{text}</line> tags
+- 11. Your output must:
+     - Maintain the exact same chunk tags with the same number
+     - Keep all <line id="{number}"> tags in their original position
+     - Provide translation as a single line within each <line> tag (no line breaks)
+     - Include the [END_OF_CHUNK_{n}_FOR_AI_TRANSLATION] marker at the end
+- 12. Never skip, merge, or modify any XML tags
+- 13. Translate the complete text within each chunk
+
+The xml chunks below in Sinhala is a Buddhist commentary text. Please translate it into English:
+
 
