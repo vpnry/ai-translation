@@ -124,7 +124,7 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
         # Look for existing translations with the same base name and AI model
         existing_translations = list(source_path.parent.glob(f"{base_name}_*_{AI_MODEL}.xml"))
         if existing_translations:
-            print(f"------> SKIPPING {input_file} - SEEMS THAT THERE IS A translated FILE FOR:")
+            print(f"------> SKIPPING {input_file} - THERE IS A translated FILE here:")
             for trans in existing_translations:
                 print(f"  {trans.name}")
             return
