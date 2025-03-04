@@ -15,7 +15,8 @@ __pycache__/
 .venv/
 dev_test/
 dev/
-
+zz/
+zzz/
 
 # C extensions
 *.so

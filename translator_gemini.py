@@ -12,6 +12,11 @@ import argparse
 from functools import wraps
 import random
 
+GEMINI_API_PROJECT_KEY_FILE = "./gemini_key_project_1.txt"
+AI_MODEL = "gemini-2.0-flash"  # "gemini-2.0-pro-exp"
+CALLS_PER_MINUTE = 14  # max 15 requests per minute, here use 14
+PERIOD = 60
+
 
 # Configure Gemini
 # https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
@@ -22,10 +27,6 @@ import random
 # Gemini 2.0 Pro Experimental 02-05	2	1,000,000	50
 
 
-GEMINI_API_PROJECT_KEY = "./gemini_key_project_1.txt"
-AI_MODEL = "gemini-2.0-flash"  # "gemini-2.0-pro-exp"
-CALLS_PER_MINUTE = 14  # max 15 requests per minute, here use 14
-PERIOD = 60
 
 # Re-tries configures
 MAX_RETRIES = 8
@@ -33,7 +34,7 @@ INITIAL_RETRY_DELAY = 10
 MAX_RETRY_DELAY = 1280
 
 
-def read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY):
+def read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY_FILE):
     # get a (free) API key from here https://aistudio.google.com/apikey
     print(f"Using key from: {key_file}")
     with open(key_file, "r") as file:
@@ -155,9 +156,19 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
             log_file, "w", encoding="utf-8"
         ) as log_f:
 
+            # Write warning info to the translated files
+            info_warning = f"""<info>
+Translated by {AI_MODEL}
+Started at: {timestamp}
+**WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.**
+
+- Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the original Pāḷi text for verification.
+</info>\n\n"""
+            f.write(info_warning)
             # Write initial log info
             log_f.write(f"Translation log for {input_file}\n")
             log_f.write(f"Started at: {timestamp}\n")
+            log_f.write(f"API Key file: {GEMINI_API_PROJECT_KEY_FILE}\n\n")
             log_f.write(f"Model: {AI_MODEL}\n\n")
 
             for i, chunk in enumerate(chunks_list, 1):

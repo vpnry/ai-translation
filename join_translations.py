@@ -6,11 +6,8 @@ from typing import Dict, Tuple, Optional
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import PathCompleter
 from prompt_toolkit.validation import Validator, ValidationError
-from html_template import (
-    generate_html_header,
-    generate_title_section,
-    generate_html_footer,
-)
+from unidecode import unidecode
+
 from check_translate import check_translation_completeness
 
 
@@ -48,7 +45,9 @@ def get_lines_dict_from_file(file_path: Path) -> Dict[int, str]:
                             f"Warning: Duplicate ID {id_num} found in {file_path.name}.  Overwriting previous entry."
                         )
                     lines[id_num] = text.strip()
-        print(f"Final check by joiner: {len(lines.keys())} line IDs in: {file_path.name}")
+        print(
+            f"Final check by joiner: {len(lines.keys())} line IDs in: {file_path.name}"
+        )
         return lines
     except FileNotFoundError:
         print(f"Warning: File {file_path} not found")
@@ -73,29 +72,50 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
     for i in range(1, num_translations + 1):
         trans_file = source_path.parent / f"{base_name}_translated_{i}.xml"
 
-        check_translation_completeness(source_file,str(trans_file))
+        check_translation_completeness(source_file, str(trans_file))
 
         translations.append(get_lines_dict_from_file(trans_file))
 
     with open(output_file, "w", encoding="utf-8") as fo:
-        # Write HTML header
-        fo.write(generate_html_header(base_name))
-
-        # Write title section
-        fo.write(generate_title_section(base_name, num_translations))
-        fo.write("\n\n---\n\n")
 
         # Write content
         for id_num in sorted(source_lines.keys()):
             fo.write(f"<p><i>ID{id_num}</i></p>\n\n")
             source_text = source_lines[id_num]
 
-            if get_heading_level(source_text):
-                fo.write(f"{source_text}\n\n")
+            heading_num = get_heading_level(source_text)
+            if heading_num:
+                # Create heading ID based on text content, removing special chars and spaces
+                heading_text = source_text.strip().lstrip("#").strip()
+                
+                heading_id = re.sub(
+                    r"[^a-zA-Z0-9]+", "-", unidecode(heading_text.lower()).lower()
+                ).strip("-")
+
+                # Add ID number to ensure uniqueness for same text
+                heading_id = f"{heading_id}-id{id_num}"
+                fo.write(
+                    f"<h{heading_num} id='{heading_id}' class='sh'>{heading_text}</h{heading_num}>\n\n"
+                )
 
                 for x, trans in enumerate(translations, 1):
+                    trans_text = (
+                        trans.get(
+                            id_num, f"[MISSING TRANSLATION in translated file {x}]"
+                        )
+                        .strip()
+                        .lstrip("#")
+                        .strip()
+                    )
+                    trans_h_id = re.sub(
+                        r"[^a-zA-Z0-9]+", "-", unidecode(trans_text).lower()
+                    ).strip("-")
+
+                    # Add ID number to ensure uniqueness for same text
+                    trans_h_id = f"{trans_h_id}-id{id_num}-t{x}"
+
                     fo.write(
-                        f"{trans.get(id_num, f'[MISSING TRANSLATION in translated file {x}]').strip()}\n\n"
+                        f"<h{heading_num} id='{trans_h_id}' class='th{x}'>{trans_text}</h{heading_num}>\n\n"
                     )
             else:
                 fo.write(f"<p class='s1'>{source_text}</p>\n\n")
@@ -107,14 +127,12 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
             fo.write("---\n\n")
 
         # Write footer
-        fo.write(generate_html_footer())
+        fo.flush()
 
     print(f"\n=== Multilingual markdown created: {output_file}")
+    print("\nTo convert to TPO html: python3 gen_tpo_html.py")
     print(
-        f"\n** For Vipassakarama's users:\nTo convert to HTML:\npandoc {output_file} -o {str(output_file).replace('.md', '.html')} --toc --toc-depth=3"
-    )
-    print(
-        f"To add TOC:\npython3 addTOC.py {str(output_file).replace('.md', '.html')}\n"
+        f"\n** Or Using pandoc to convert it into HTML:\nTo convert to HTML:\npandoc {output_file} -o {str(output_file).replace('.md', '.html')} --toc --toc-depth=5"
     )
 
 

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$FILE_TITLE</title>
+    <style>
+        body {
+            font-size: medium;
+            font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;
+        }
+
+        .s1 {
+            text-align: left;
+            border-left: 8px solid #7c6154;
+            padding-left: 5px;
+            background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
+        }
+
+        .t1 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #ce93d8;
+            border-radius: 10px;
+        }
+
+        .t2 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #90caf9;
+            border-radius: 10px;
+        }
+
+        .t3 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #e57373;
+            border-radius: 10px;
+        }
+
+        .t4 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #ffe082;
+            border-radius: 10px;
+        }
+
+        .t5 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #a5d6a7;
+            border-radius: 10px;
+        }
+
+        .t6 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #ffa700;
+            border-radius: 10px;
+        }
+
+        .t7 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #ff1493;
+            border-radius: 10px;
+        }
+
+        .t8 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #00ffff;
+            border-radius: 10px;
+        }
+
+        .t9 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #800080;
+            border-radius: 10px;
+        }
+
+        .t10 {
+            text-align: justify;
+            padding-left: 6px;
+            border-left: 5px solid #ffff00;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .hr_info {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #8B4513, transparent);
+            margin: 15px 0;
+        }
+    </style>
+    <link href="https://tipitakapali.org/web/tp.css" rel="stylesheet" />
+    <script src="https://tipitakapali.org/web/theme.js"></script>
+    <script>
+        function toggleTranslation(num) {
+            const checkbox = document.getElementById(`toggle_t${num}`);
+            // heading
+            const heading_el = document.getElementsByClassName(`th${num}`);
+            for (let el of heading_el) {
+                el.style.display = checkbox.checked ? 'block' : 'none';
+            }
+
+            // para
+            const p_el = document.getElementsByClassName(`t${num}`);
+            for (let el of p_el) {
+                el.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <div id="dictionary-res"></div>
+    <p id="floatingTocButton"> 📜 </p>
+    <div id="tocDivBox" style="display: none;"></div>
+
+    <div
+        style="border: 2px solid #8B4513; border-radius: 8px; padding: 20px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto; max-width: 800px;">
+        <h2 style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px;">$FILE_TITLE</h2>
+        <hr class="hr_info">
+        <p style="color: #DC3545; font-weight: bold; text-align: center; font-size: 16px; margin: 15px 0;">
+            WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.</p>
+        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the
+            original Pāḷi text for verification.<br>
+            The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi
+            passages.</p>
+        <hr class="hr_info">
+        <div style="margin: 15px 0; padding: 10px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); border-radius: 5px;">
+            <p style="margin-bottom: 10px; font-weight: bold;">Hide/Show Translations:</p>
+            $TRANSLATIONS_TOGGLE
+        </div>
+        <p style="color: #444; font-size: 14px; margin: 8px 0;" class="s1">Source text: <a href="https://example.com"
+                target="_blank">Your source text here</a> (DD MM YYYY)</p>
+        $TRANSLATIONS_ORDER
+        <hr class="hr_info">
+    </div>
+
+    $FILE_HTML
+
+    <script defer src="https://tipitakapali.org/web/paliscriptconverter_edited.js"></script>
+    <script defer src="https://tipitakapali.org/web/handleClick.js"></script>
+    <script defer src="https://tipitakapali.org/web/renderer.js"></script>
+</body>
+
+</html>

@@ -78,7 +78,7 @@ def copy_chunks(
     # Print copied chunks info
     chunk_numbers = [chunk_num for chunk_num, _ in selected_chunks]
     print(text_to_copy)
-    print(f"Copied chunks {chunk_numbers} to clipboard")
+    print(f"Copied chunks {chunk_numbers} to clipboard. File: {len(chunks)} chunks")
 
     # Open the specified website
     if website_url:
