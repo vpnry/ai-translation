@@ -5,7 +5,7 @@ error.txt
 # atthakatha_text_sinh/
 # atthakatha_json/
 deleteme*.py
-gemini_key*.txt
+gemini_key*
 error.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -15,11 +15,7 @@ __pycache__/
 .venv/
 dev_test/
 dev/
-zz/
-zzz/
-aaa_pnry_note.txt
-
-pnry_tpo_html_template.html
+pnry_*
 
 # C extensions
 *.so

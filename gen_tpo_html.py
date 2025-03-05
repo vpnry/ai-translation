@@ -189,6 +189,11 @@ def add_toc(html_file_path, output_file_path=None):
             # Create a link to the heading
             link = soup.new_tag("a", href=f"#{heading_id}")
             link.string = heading_text
+            
+            if not heading_text.startswith("=>"):
+                link['class'] = link.get('class', []) + ['stoc'] 
+            # print(heading_text[0],heading_text[1], link)
+
             list_item.append(link)
             toc_list.append(list_item)
 
@@ -245,10 +250,12 @@ def convert_addTOC(
 
     FILE_PAGE_TITLE = f"{file_title.title()}"
     FILE_PAGE_SUBTITLE = "(Pāḷi-English AI-Generated Translations)"
+    FILE_HTML_DESCRIPTION = f"{FILE_PAGE_TITLE} Pāḷi-English (AI Translations)"
 
     # Replace placeholders in the HTML template
     html = (
         html.replace("$FILE_HTML_TITLE_TAG", FILE_HTML_TITLE_TAG)
+        .replace("$FILE_HTML_DESCRIPTION", FILE_HTML_DESCRIPTION)
         .replace("$FILE_PAGE_TITLE", FILE_PAGE_TITLE)
         .replace("$FILE_PAGE_SUBTITLE", FILE_PAGE_SUBTITLE)
         .replace("$TRANSLATIONS_TOGGLE", TRANSLATIONS_TOGGLE)

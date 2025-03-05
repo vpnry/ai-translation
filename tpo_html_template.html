@@ -5,13 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$FILE_HTML_TITLE_TAG</title>
+    <meta name="description" content="$FILE_HTML_DESCRIPTION">
+
     <style>
         body {
             font-size: medium;
             font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;
         }
 
+        .stoc {
+            /* bold the source text heading in TOC */
+            font-weight: bolder;
+        }
+
+        .hs {
+            /* source text heading in page */
+            font-weight: bolder;
+            background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
+        }
+
         .ht {
+            /* translated headings in page */
             padding-left: 5px;
             font-size: small;
         }
