@@ -32,6 +32,10 @@ def replace_smart_quotes_md(md_filepath) -> str:
         # Perform the replacements
         content = content.replace("‘‘", "&ldquo;")
         content = content.replace("’’", "&rdquo;")
+
+        # Replace en dash (–) with hyphen (-)
+        # content = content.replace("–", "-")
+
         with open(fix_quotes_save, "w", encoding="utf-8") as f:
             f.write(content)
         print(f"\nSmart quotes replaced with HTML entities in {md_filepath}")
@@ -189,10 +193,15 @@ def add_toc(html_file_path, output_file_path=None):
             # Create a link to the heading
             link = soup.new_tag("a", href=f"#{heading_id}")
             link.string = heading_text
-            
-            if not heading_text.startswith("=>"):
-                link['class'] = link.get('class', []) + ['stoc'] 
-            # print(heading_text[0],heading_text[1], link)
+
+            if "hs" in heading.get("class", []):
+                list_item["class"] = list_item.get("class", []) + ["stoc"]
+            elif "ht" in heading.get("class", []):
+                # Remove "ht" and add "ttoc"
+                current_classes = heading.get("class", [])
+                list_item["class"] = ["ttoc"] + [c for c in current_classes if c != "ht"]
+            else:
+                pass
 
             list_item.append(link)
             toc_list.append(list_item)
@@ -228,7 +237,7 @@ def convert_addTOC(
 
     # If output_file is not provided, derive it from md_file
     if output_file is None:
-        
+
         output_file = os.path.splitext(md_file)[0] + ".html"
         print(f"OK: No output html filename provided, using {output_file}")
 

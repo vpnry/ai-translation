@@ -13,6 +13,12 @@
             font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;
         }
 
+        li.ttoc {
+            /* Removes the bullet point */
+            list-style-type: none;
+            border-left: none !important;
+        }
+
         .stoc {
             /* bold the source text heading in TOC */
             font-weight: bolder;
@@ -28,6 +34,46 @@
             /* translated headings in page */
             padding-left: 5px;
             font-size: small;
+        }
+
+        .ht1 {
+            border-left: 5px solid #ce93d8;
+        }
+
+        .ht2 {
+            border-left: 5px solid #90caf9;
+        }
+
+        .ht3 {
+            border-left: 5px solid #e57373;
+        }
+
+        .ht4 {
+            border-left: 5px solid #ffe082;
+        }
+
+        .ht5 {
+            border-left: 5px solid #a5d6a7;
+        }
+
+        .ht6 {
+            border-left: 5px solid #ffa700;
+        }
+
+        .ht7 {
+            border-left: 5px solid #ff1493;
+        }
+
+        .ht8 {
+            border-left: 5px solid #00ffff;
+        }
+
+        .ht9 {
+            border-left: 5px solid #800080;
+        }
+
+        .ht10 {
+            border-left: 5px solid #ffff00;
         }
 
         .s1 {
@@ -147,7 +193,8 @@
     <div
         style="border: 2px solid #8B4513; border-radius: 8px; padding: 20px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto; max-width: 800px;">
 
-        <div style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px; font-weight: bolder;">$FILE_PAGE_TITLE</div>
+        <div style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px; font-weight: bolder;">
+            $FILE_PAGE_TITLE</div>
 
         <div style="color: #8B4513; text-align: center; margin-bottom: 15px;font-size: 18px; font-weight: bold;">
             $FILE_PAGE_SUBTITLE</div>
@@ -155,9 +202,11 @@
         <hr class="hr_info">
         <p style="color: #DC3545; font-weight: bold; text-align: center; font-size: 16px; margin: 15px 0;">
             WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.</p>
-        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the original Pāḷi text for verification.</p>
-        
-        <p>The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi passages.</p>
+        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the
+            original Pāḷi text for verification.</p>
+
+        <p>The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi
+            passages.</p>
 
         <hr class="hr_info">
         <p style="color: #444; font-size: 14px; font-family: monospace; margin: 8px 0;">

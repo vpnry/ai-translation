@@ -124,7 +124,7 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
                     trans_h_id = f"{trans_h_id}-id{id_num}-t{x}"
 
                     fo.write(
-                        f"<h{heading_num} id='{trans_h_id}' class='ht ht{x}'>=> {escape_dot_li(trans_text)}</h{heading_num}>\n\n"
+                        f"<h{heading_num} id='{trans_h_id}' class='ht ht{x}'>{escape_dot_li(trans_text)}</h{heading_num}>\n\n"
                     )
             else:
                 fo.write(f"<p class='s1'>{escape_dot_li(source_text)}</p>\n\n")
@@ -205,7 +205,7 @@ def main():
         )
         parser.add_argument(
             "-n",
-            "--num-translations",
+            "--translations",
             help="Number of translated files to include",
             type=int,
             required=True,
@@ -215,7 +215,7 @@ def main():
 
         # Create the markdown file
         create_multilingual_md(
-            args.xml_source_file, num_translations=args.num_translations
+            args.xml_source_file, num_translations=args.translations
         )
 
 
