@@ -46,12 +46,20 @@ def get_lines_dict_from_file(file_path: Path) -> Dict[int, str]:
                         )
                     lines[id_num] = text.strip()
         print(
-            f"Final check by joiner: {len(lines.keys())} line IDs in: {file_path.name}"
+            f"Final check by joiner: {len(lines.keys())} line IDs in: {file_path.name}\n\n"
         )
         return lines
     except FileNotFoundError:
         print(f"Warning: File {file_path} not found")
         return {}
+
+
+def escape_dot_li(text):
+    """
+    Replaces the first '.' with '\.' only if it appears immediately after a number at the start of the text.
+    This is to fix pandoc adding li to the heading
+    """
+    return re.sub(r"^(\d+)\.", r"\1\.", text)
 
 
 def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
@@ -64,7 +72,7 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
         return
 
     base_name = source_path.stem
-    output_file = source_path.parent / f"{base_name}_{num_translations}_translations.md"
+    md_output_file = source_path.parent / f"{base_name}_{num_translations}_translations.md"
 
     # Read source and translation files
     source_lines = get_lines_dict_from_file(source_path)
@@ -76,7 +84,7 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
 
         translations.append(get_lines_dict_from_file(trans_file))
 
-    with open(output_file, "w", encoding="utf-8") as fo:
+    with open(md_output_file, "w", encoding="utf-8") as fo:
 
         # Write content
         for id_num in sorted(source_lines.keys()):
@@ -87,15 +95,16 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
             if heading_num:
                 # Create heading ID based on text content, removing special chars and spaces
                 heading_text = source_text.strip().lstrip("#").strip()
-                
+
                 heading_id = re.sub(
                     r"[^a-zA-Z0-9]+", "-", unidecode(heading_text.lower()).lower()
                 ).strip("-")
 
                 # Add ID number to ensure uniqueness for same text
+
                 heading_id = f"{heading_id}-id{id_num}"
                 fo.write(
-                    f"<h{heading_num} id='{heading_id}' class='sh'>{heading_text}</h{heading_num}>\n\n"
+                    f"<h{heading_num} id='{heading_id}' class='hs'>{escape_dot_li(heading_text)}</h{heading_num}>\n\n"
                 )
 
                 for x, trans in enumerate(translations, 1):
@@ -115,24 +124,25 @@ def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
                     trans_h_id = f"{trans_h_id}-id{id_num}-t{x}"
 
                     fo.write(
-                        f"<h{heading_num} id='{trans_h_id}' class='th{x}'>{trans_text}</h{heading_num}>\n\n"
+                        f"<h{heading_num} id='{trans_h_id}' class='ht ht{x}'>=> {escape_dot_li(trans_text)}</h{heading_num}>\n\n"
                     )
             else:
-                fo.write(f"<p class='s1'>{source_text}</p>\n\n")
+                fo.write(f"<p class='s1'>{escape_dot_li(source_text)}</p>\n\n")
                 for i, trans in enumerate(translations, 1):
-                    fo.write(
-                        f"<p class='t{i}'>{trans.get(id_num, f'[MISSING TRANSLATION in translated file {i}]')}</p>\n\n"
+                    trans_t_i = trans.get(
+                        id_num, f"[MISSING TRANSLATION in translated file {i}]"
                     )
+                    fo.write(f"<p class='t{i}'>{escape_dot_li(trans_t_i)}</p>\n\n")
 
             fo.write("---\n\n")
 
         # Write footer
         fo.flush()
 
-    print(f"\n=== Multilingual markdown created: {output_file}")
-    print("\nTo convert to TPO html: python3 gen_tpo_html.py")
+    print(f"\n=== Multilingual markdown created: {md_output_file}")
+    print(f"\n\nTo convert to HTML (Tipitakapali.org template):\n\npython3 gen_tpo_html.py --md-file {md_output_file} --translations {num_translations} --title TITLE_HERE")
     print(
-        f"\n** Or Using pandoc to convert it into HTML:\nTo convert to HTML:\npandoc {output_file} -o {str(output_file).replace('.md', '.html')} --toc --toc-depth=5"
+        f"\n** Or using pandoc CLI"
     )
 
 

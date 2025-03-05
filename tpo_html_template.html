@@ -4,11 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$FILE_TITLE</title>
+    <title>$FILE_HTML_TITLE_TAG</title>
     <style>
         body {
             font-size: medium;
             font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;
+        }
+
+        .ht {
+            padding-left: 5px;
+            font-size: small;
         }
 
         .s1 {
@@ -104,7 +109,7 @@
         function toggleTranslation(num) {
             const checkbox = document.getElementById(`toggle_t${num}`);
             // heading
-            const heading_el = document.getElementsByClassName(`th${num}`);
+            const heading_el = document.getElementsByClassName(`ht${num}`);
             for (let el of heading_el) {
                 el.style.display = checkbox.checked ? 'block' : 'none';
             }
@@ -124,26 +129,45 @@
     <p id="floatingTocButton"> 📜 </p>
     <div id="tocDivBox" style="display: none;"></div>
 
+
     <div
         style="border: 2px solid #8B4513; border-radius: 8px; padding: 20px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto; max-width: 800px;">
-        <h2 style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px;">$FILE_TITLE</h2>
+
+        <div style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px; font-weight: bolder;">$FILE_PAGE_TITLE</div>
+
+        <div style="color: #8B4513; text-align: center; margin-bottom: 15px;font-size: 18px; font-weight: bold;">
+            $FILE_PAGE_SUBTITLE</div>
+
         <hr class="hr_info">
         <p style="color: #DC3545; font-weight: bold; text-align: center; font-size: 16px; margin: 15px 0;">
             WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.</p>
-        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the
-            original Pāḷi text for verification.<br>
-            The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi
-            passages.</p>
+        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the original Pāḷi text for verification.</p>
+        
+        <p>The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi passages.</p>
+
         <hr class="hr_info">
-        <div style="margin: 15px 0; padding: 10px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); border-radius: 5px;">
-            <p style="margin-bottom: 10px; font-weight: bold;">Hide/Show Translations:</p>
-            $TRANSLATIONS_TOGGLE
-        </div>
-        <p style="color: #444; font-size: 14px; margin: 8px 0;" class="s1">Source text: <a href="https://example.com"
-                target="_blank">Your source text here</a> (DD MM YYYY)</p>
+        <p style="color: #444; font-size: 14px; font-family: monospace; margin: 8px 0;">
+            - For the Table of Contents, please click on the 📜 icon in the left-hand corner.
+            <br>- Click on any word to pop up ONLINE dictionaries.
+            <br>- Code files to assist with translation: <span style="color: #0077ff;"><a
+                    href="https://github.com/vpnry/ai-translation"
+                    target="_blank">https://github.com/vpnry/ai-translation</a></span>
+        </p>
+        <hr class="hr_info">
+        <p style="margin-bottom: 10px; font-weight: bold; color:#176bf2">Hide|Show Translations:</p>
+        $TRANSLATIONS_TOGGLE
+
+        <hr class="hr_info">
+
+        <p style="color: #444; font-size: 14px; margin: 8px 0;" class="s1">Pāḷi text: <a href="https://tipitakapali.org"
+                target="_blank">https://tipitakapali.org</a> (Feb 2025)</p>
         $TRANSLATIONS_ORDER
+
         <hr class="hr_info">
+
+        <p style="color: #6d6c6c; font-family: monospace; font-size: 14px; margin: 8px 0;">$FILE_LAST_MODIFIED</p>
     </div>
+
 
     $FILE_HTML
 

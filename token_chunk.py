@@ -123,7 +123,7 @@ def create_english_md(output_file_english):
     if not os.path.exists(output_file_english):
         with open(output_file_english, "w", encoding="utf-8") as f:
             f.write(
-                """<info>\n**WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.**
+                """<info>\nTranslatedBy=LLM model (DD MM YY)\n\n**WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.**
 
 - Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the original Pāḷi text for verification.
 

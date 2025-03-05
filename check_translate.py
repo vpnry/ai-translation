@@ -7,6 +7,7 @@ from pathlib import Path
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import PathCompleter
 
+
 def get_validated_input(message: str, validator=None, completer=None) -> str:
     """Get input with validation and completion"""
     try:
@@ -75,14 +76,14 @@ def check_translation_completeness(
 
     # Check for duplicates in source file
     if source_duplicates:
-        print("❌ Found duplicate IDs in source file:")
+        print(f"❌ {xml_source_file}: Found duplicate IDs in source file:")
         for id_, count in sorted(source_duplicates.items()):
             print(f"  ID {id_} appears {count} times")
         has_errors = True
 
     # Check for duplicates in translated file
     if translated_duplicates:
-        print("❌ Found duplicate IDs in translation file:")
+        print(f"❌ {xml_translated_file}: Found duplicate IDs in translation file:")
         for id_, count in sorted(translated_duplicates.items()):
             print(f"  ID {id_} appears {count} times")
         has_errors = True
@@ -90,14 +91,18 @@ def check_translation_completeness(
     # Find missing IDs
     missing_ids = source_xml_ids - translated_ids
     if missing_ids:
-        print(f"❌ Missing translations for {len(missing_ids)} lines:")
+        print(
+            f"❌ {xml_translated_file}: Missing translations for {len(missing_ids)} lines:"
+        )
         print(f"Missing IDs: {sorted(missing_ids)}")
         has_errors = True
 
     # Find extra IDs in translation that don't exist in source
     extra_ids = translated_ids - source_xml_ids
     if extra_ids:
-        print(f"⚠️ Warning: Found {len(extra_ids)} extra IDs in translation file:")
+        print(
+            f"⚠️ {xml_translated_file}: warning found: {len(extra_ids)} extra IDs in translation file:"
+        )
         print(f"Extra IDs: {sorted(extra_ids)}")
 
     if not has_errors:

@@ -17,6 +17,9 @@ dev_test/
 dev/
 zz/
 zzz/
+aaa_pnry_note.txt
+
+pnry_tpo_html_template.html
 
 # C extensions
 *.so

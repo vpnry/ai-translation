@@ -87,4 +87,6 @@ if __name__ == "__main__":
 
     print(f"Starting translation of files in {args.directory}...")
     process_files(args.directory, args.pattern)
-    print("Translation tasks completed!\nPlease search 'CHUNK_FAILED' in the log files to see any failed chunks")
+    print(
+        "Translation tasks completed!\nPlease search 'CHUNK_FAILED' in the log files to see any failed chunks"
+    )

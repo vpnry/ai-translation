@@ -27,7 +27,6 @@ PERIOD = 60
 # Gemini 2.0 Pro Experimental 02-05	2	1,000,000	50
 
 
-
 # Re-tries configures
 MAX_RETRIES = 8
 INITIAL_RETRY_DELAY = 10

@@ -4,12 +4,17 @@
 """
 
 import re
-from bs4 import BeautifulSoup
 import sys
 import os
-import pypandoc
 import argparse
+
+from datetime import datetime
 from typing import Tuple
+from pathlib import Path
+
+import pypandoc
+from unidecode import unidecode
+from bs4 import BeautifulSoup
 
 
 def replace_smart_quotes_md(md_filepath) -> str:
@@ -38,50 +43,97 @@ def replace_smart_quotes_md(md_filepath) -> str:
     return fix_quotes_save
 
 
-def convert_markdown_to_html(input_file, output_file):
+def convert_markdown_to_html(md_file, output_file):
     """Converts a Markdown file to HTML using pypandoc."""
 
-    fixed_smart_quotes_filepath = replace_smart_quotes_md(input_file)
+    fixed_smart_quotes_filepath = replace_smart_quotes_md(md_file)
 
     try:
         output = pypandoc.convert_file(
             fixed_smart_quotes_filepath,
             to="html",
             outputfile=output_file,
-            extra_args=["--toc", "--toc-depth=5", "--wrap=none"],
+            extra_args=["--wrap=none"],
         )
         if output == "":
-            print(f"\nSuccessfully converted {input_file} to {output_file}")
+            print(f"\nSuccessfully converted {md_file} to {output_file}")
         else:
             print(f"Conversion may have warnings: {output}")
     except RuntimeError as e:
         print(f"Error during conversion: {e}")
 
 
-def generate_translation_info(num_translations: int) -> str:
+def generate_translation_info(md_file, num_translations: int):
     # script to hide/show translations
-
     translation_toggles = "\n".join(
         [
             f'<label style="margin-right: 15px; padding: 2px 6px; border-radius: 4px;"><input type="checkbox" id="toggle_t{i}" checked onchange="toggleTranslation({i})">Translation {i}</label>'
             for i in range(1, num_translations + 1)
         ]
     )
-    # translation_toggles = "\n".join(
-    #     [
-    #         f'<label style="margin-right: 15px;"><input type="checkbox" id="toggle_t{i}" checked onchange="toggleTranslation({i})">Translation {i}</label>'
-    #         for i in range(1, num_translations + 1)
-    #     ]
-    # )
-    # showing translation order/format
-    translations_order = "\n".join(
-        [
-            f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">Translation {i}: <span style="color: #006400;">AI {i}</span> (DD MM YYYY)</p>'
-            for i in range(1, num_translations + 1)
-        ]
-    )
 
-    return translation_toggles, translations_order
+    # showing translation order/format
+    source_path = Path(md_file)
+    if not source_path.exists():
+        print(f"Error: Source file {md_file} not found")
+        return "", ""
+    base_name = source_path.stem
+    base_name = str(base_name).split("_chunks_")
+    if (len(base_name)) != 2:
+        print("Not standard named {md_file}")
+    base_name = base_name[0]
+
+    translations_order = []
+    for i in range(1, num_translations + 1):
+        trans_number_i = source_path.parent / f"{base_name}_chunks_translated_{i}.xml"
+        try:
+            with open(trans_number_i, "r", encoding="utf-8") as f:
+                file_content = f.read()
+                # Use regex to find the <info> block.  The `re.DOTALL` flag makes . match newlines.
+                info_match = re.search(r"<info>(.*?)</info>", file_content, re.DOTALL)
+                if info_match:
+                    info_block = info_match.group(1)  # Get the content inside <info>
+                    # Find the TranslatedBy line within the <info> block.
+                    translator_match = re.search(r"TranslatedBy=(.+)", info_block)
+                    if translator_match:
+                        translator = translator_match.group(1).strip()
+                        translations_order.append(
+                            f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">'
+                            f'Translation {i}: <span style="color: #066a06;">{translator}</span></p>'
+                        )
+                        print(f"{trans_number_i} by: {translator}")
+                    else:
+                        # Handle case of no TranslatedBy= line.
+                        print(f"Could not find TranslatedBy= line in {trans_number_i}")
+
+                        translations_order.append(
+                            f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">'
+                            f'Translation {i}: <span style="color: #8b0000;">AI {i} (DD MM YYY)</span></p>'
+                        )
+                else:
+                    # Handle case of no <info> tag
+                    print(f"Could not find <info> tag in {trans_number_i}")
+
+                    translations_order.append(
+                        f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">'
+                        f'Translation {i}: <span style="color: #8b0000;">AI {i} (DD MM YYY)</span></p>'
+                    )
+
+        except FileNotFoundError:
+            print(f"File note found {trans_number_i}")
+            translations_order.append(
+                f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">'
+                f'Translation {i}: <span style="color: #8b0000;">AI {i} (DD MM YYY)</span></p>'
+            )
+        except Exception as e:
+            # Catch any other exceptions during file processing.
+            print(f"File processing error: {trans_number_i}")
+
+            translations_order.append(
+                f'<p style="color: #444; font-size: 14px; margin: 8px 0;" class="t{i}">'
+                f'Translation {i}: <span style="color: #8b0000;">AI {i} (DD MM YYY)</span></p>'
+            )
+    return translation_toggles, "\n".join(translations_order)
 
 
 def add_toc(html_file_path, output_file_path=None):
@@ -101,6 +153,7 @@ def add_toc(html_file_path, output_file_path=None):
 
         # Find the TOC div
         toc_div = soup.find("div", id="tocDivBox")
+
         if toc_div is None:
             raise ValueError("Could not find div with id='tocDivBox'")
 
@@ -138,9 +191,9 @@ def add_toc(html_file_path, output_file_path=None):
             link.string = heading_text
             list_item.append(link)
             toc_list.append(list_item)
-            # toc_list.append(soup.new_tag('li'))
 
         # Add the TOC list to the TOC div
+        # toc_div.append(copy.deepcopy(toc_list))
         toc_div.append(toc_list)
 
         # Save the modified HTML (either overwrite or to a new file)
@@ -160,59 +213,85 @@ def add_toc(html_file_path, output_file_path=None):
 
 
 def convert_addTOC(
-    md_file, file_title, num_translations=4, tpo_template="./tpo_html_template.html"
+    md_file,
+    file_title,
+    output_file=None,
+    num_translations=4,
+    tpo_template="./tpo_html_template.html",
 ):
-    html_output = os.path.splitext(md_file)[0] + ".html"
+    """Convert Markdown to HTML, add TOC, and apply translations template."""
 
-    convert_markdown_to_html(md_file, html_output)
+    # If output_file is not provided, derive it from md_file
+    if output_file is None:
+        
+        output_file = os.path.splitext(md_file)[0] + ".html"
+        print(f"OK: No output html filename provided, using {output_file}")
 
-    # manually update the template
+    convert_markdown_to_html(md_file, output_file)
 
+    # Manually update the template
     TRANSLATIONS_TOGGLE, TRANSLATIONS_ORDER = generate_translation_info(
-        num_translations=num_translations
+        md_file, num_translations=num_translations
     )
+
+    print(f"\n\nUsing {tpo_template}")
 
     with open(tpo_template, "r", encoding="utf-8") as tpo:
         html = tpo.read()
-    html = html.replace("$FILE_TITLE", file_title).replace(
-        "$TRANSLATIONS_TOGGLE", TRANSLATIONS_TOGGLE
+
+    # Generate dynamic file titles
+    FILE_HTML_TITLE_TAG = f"{file_title.title()}-Pali-Eng-AI-Generated-Translations"
+    FILE_HTML_TITLE_TAG = unidecode(FILE_HTML_TITLE_TAG.lower()).lower()
+
+    FILE_PAGE_TITLE = f"{file_title.title()}"
+    FILE_PAGE_SUBTITLE = "(Pāḷi-English AI-Generated Translations)"
+
+    # Replace placeholders in the HTML template
+    html = (
+        html.replace("$FILE_HTML_TITLE_TAG", FILE_HTML_TITLE_TAG)
+        .replace("$FILE_PAGE_TITLE", FILE_PAGE_TITLE)
+        .replace("$FILE_PAGE_SUBTITLE", FILE_PAGE_SUBTITLE)
+        .replace("$TRANSLATIONS_TOGGLE", TRANSLATIONS_TOGGLE)
+        .replace("$TRANSLATIONS_ORDER", TRANSLATIONS_ORDER)
+        .replace(
+            "$FILE_LAST_MODIFIED",
+            f"This file was last modified on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        )
     )
 
-    html = html.replace("$TRANSLATIONS_ORDER", TRANSLATIONS_ORDER)
-
-    with open(html_output, "r", encoding="utf-8") as fhtml:
+    # Inject the converted HTML content
+    with open(output_file, "r", encoding="utf-8") as fhtml:
         html = html.replace("$FILE_HTML", fhtml.read())
 
-    with open(html_output, "w", encoding="utf-8") as fdone:
+    # Save the final HTML file
+    with open(output_file, "w", encoding="utf-8") as fdone:
         fdone.write(html)
 
-    # adding TOC
-    add_toc(html_output)
+    # Adding TOC
+    add_toc(output_file)
 
-    print(f"\nDone all. Check {html_output}")
+    print(f"\nDone all. Check {output_file}")
 
 
 def parse_arguments() -> argparse.Namespace:
-    """Parse command line arguments."""
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Convert Markdown to HTML with TOC and translations support"
     )
-    parser.add_argument("input_file", help="Input Markdown file to convert")
+
     parser.add_argument(
-        "--title", "-t", help="Title for the HTML document", default=None
+        "--md-file", required=True, help="Input Markdown file to convert"
     )
+
+    parser.add_argument("--title", required=True, help="Title for the HTML document")
+
     parser.add_argument(
         "--translations",
-        "-n",
         type=int,
         help="Number of translations to include (default: 4)",
         default=4,
     )
-    parser.add_argument(
-        "--template",
-        help="Custom HTML template file (default: ./tpo_html_template.html)",
-        default="./tpo_html_template.html",
-    )
+
     parser.add_argument(
         "--output",
         "-o",
@@ -220,35 +299,51 @@ def parse_arguments() -> argparse.Namespace:
         default=None,
     )
 
+    parser.add_argument(
+        "--template",
+        help="Custom HTML template file (default: ./tpo_html_template.html)",
+        default="./tpo_html_template.html",
+    )
+
     return parser.parse_args()
 
 
 def validate_inputs(args: argparse.Namespace) -> Tuple[str, str, str]:
     """Validate input arguments and return processed values."""
-    if not os.path.exists(args.input_file):
-        raise FileNotFoundError(f"Input file not found: {args.input_file}")
+    input_md_file = args.md_file
+    template_file = args.template
 
-    if not os.path.exists(args.template):
-        raise FileNotFoundError(f"Template file not found: {args.template}")
+    if not os.path.exists(input_md_file):
+        raise FileNotFoundError(f"Input file not found: {input_md_file}")
+
+    if not os.path.exists(template_file):
+        raise FileNotFoundError(f"Template file not found: {template_file}")
 
     # Generate output filename if not provided
-    output_file = args.output or os.path.splitext(args.input_file)[0] + ".html"
+    output_file = (
+        args.output if args.output else os.path.splitext(input_md_file)[0] + ".html"
+    )
 
     # Use input filename as title if not provided
-    title = args.title or os.path.splitext(os.path.basename(args.input_file))[0]
+    title = (
+        args.title
+        if args.title
+        else os.path.splitext(os.path.basename(input_md_file))[0]
+    )
 
-    return args.input_file, output_file, title
+    return input_md_file, output_file, title
 
 
 def main():
     """Main entry point for the script."""
     try:
         args = parse_arguments()
-        input_file, output_file, title = validate_inputs(args)
+        md_file, output_file, title = validate_inputs(args)
 
         convert_addTOC(
-            md_file=input_file,
+            md_file=md_file,
             file_title=title,
+            output_file=output_file,
             num_translations=args.translations,
             tpo_template=args.template,
         )
