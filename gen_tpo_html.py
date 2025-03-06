@@ -71,7 +71,7 @@ def generate_translation_info(md_file, num_translations: int):
     # script to hide/show translations
     translation_toggles = "\n".join(
         [
-            f'<label style="margin-right: 15px; padding: 2px 6px; border-radius: 4px;"><input type="checkbox" id="toggle_t{i}" checked onchange="toggleTranslation({i})">Translation {i}</label>'
+            f'<label style="margin-right: 15px; padding: 2px 6px; border-radius: 4px;"><input type="checkbox" id="toggle_t{i}" checked onchange="toggleTranslation({i})">Tr. {i}</label>'
             for i in range(1, num_translations + 1)
         ]
     )
