@@ -10,19 +10,16 @@ Your translation will be used in a book print. When translating, adhere to these
 - 6. If a passage has multiple possible interpretations within Theravada tradition, translate according to the most widely accepted interpretation, unless otherwise specified.
 - 7. Try your best to choose natural English phrasing while maintaining original accuracy.
 - 8. Do not remove or translate the references like (pāci. 239)
+- 9. Never skip, merge, or modify any XML tags, line ids
 
 Input/Output Format Requirements:
-- 9. Input will be provided in XML chunks with this format:
-     <chunk{n}>{Pali text}</chunk{n}>
-     where {n} is the chunk number
-- 10. Each chunk contains multiple <line id="{number}">{text}</line> tags
-- 11. Your output must:
+Input will be provided in XML chunks with this format:
+     <chunk{n}><line id="{id_number}">{pāḷi text}</line></chunk{n}>
+     where {n} is the chunk number, id_number is the line numbers
+Your output must:
      - Maintain the exact same chunk tags with the same number
      - Keep all <line id="{number}"> tags in their original position
      - Provide translation as a single line within each <line> tag (no line breaks)
      - Include the [END_OF_CHUNK_{n}_FOR_AI_TRANSLATION] marker at the end
-- 12. Never skip, merge, or modify any XML tags
-- 13. Translate the complete text within each chunk
 
-The xml chunks below in Pali is a commentary text of Vinaya text named Dvemātikāpāḷi. Please translate it into English:
-
+The xml chunks below in pāḷi is a commentary text of Vinaya text named Vinayasaṅgaha-aṭṭhakathā. Please translate them into English:

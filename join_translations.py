@@ -44,6 +44,9 @@ def get_lines_dict_from_file(file_path: Path) -> Dict[int, str]:
                         print(
                             f"Warning: Duplicate ID {id_num} found in {file_path.name}.  Overwriting previous entry."
                         )
+                    if text == None:
+                        print("Empty line:", id_num)
+                        text = ""
                     lines[id_num] = text.strip()
         print(
             f"Final check by joiner: {len(lines.keys())} line IDs in: {file_path.name}\n\n"

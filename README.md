@@ -19,7 +19,7 @@ These scripts are primarily for my personal use, but I'm sharing them here as a 
 
 AI/LLM-generated translations **can be inaccurate or misleading**. They should be used as **reference only**, not as definitive translations.
 
-However, they are useful for **keyword searching** in full-text searches. By identifying where a topic appears in the text, you can refer to the **original Pāli/text** for precise understanding, saving time in locating key passages.
+However, they are useful for **keyword searching** in full-text searches. By identifying where a topic appears in the text, you can refer to the **original pāḷi/text** for precise understanding, saving time in locating key passages.
 
 ---
 
