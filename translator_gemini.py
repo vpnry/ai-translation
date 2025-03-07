@@ -5,7 +5,7 @@ from google.genai import types
 
 import time
 from datetime import datetime
-from ratelimit import limits, sleep_and_retry  # pip install ratelimit
+from ratelimit import limits, sleep_and_retry
 import re
 from pathlib import Path
 import argparse
@@ -13,19 +13,22 @@ from functools import wraps
 import random
 
 GEMINI_API_PROJECT_KEY_FILE = "./gemini_key_project_1.txt"
-AI_MODEL = "gemini-2.0-flash"  # "gemini-2.0-pro-exp"
-CALLS_PER_MINUTE = 14  # max 15 requests per minute, here use 14
+AI_MODEL = "gemini-2.0-flash"
+
+CALLS_PER_MINUTE = 14
 PERIOD = 60
 
 
 # Configure Gemini
 # https://ai.google.dev/gemini-api/docs/rate-limits#free-tier
 # free tier per project per day:
-# Model	RPM	TokenPM	RequestPDay
+# Model	RPM	TPM	RPD
 # Gemini 2.0 Flash	15	1,000,000	1,500
 # Gemini 2.0 Flash-Lite	30	1,000,000	1,500
 # Gemini 2.0 Pro Experimental 02-05	2	1,000,000	50
+# Gemini 2.0 Flash Thinking Experimental 01-21	10	4,000,000	1,500
 
+# The "gemini-2.0-flash-thinking-exp-01-21" has max_output_tokens=65536
 
 # Re-tries configures
 MAX_RETRIES = 8
@@ -63,8 +66,8 @@ GEMINI_SAFE_SETTINGS = [
         threshold=types.HarmBlockThreshold.BLOCK_NONE,
     ),
     types.SafetySetting(
-        category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
-        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+        category="HARM_CATEGORY_CIVIC_INTEGRITY",
+        threshold="OFF",  # Off
     ),
 ]
 
@@ -111,8 +114,12 @@ def gemini_translate(chunk):
         contents=f"{load_sytem_prompt()}\n{chunk}",
         config=types.GenerateContentConfig(
             # system_instruction=load_sytem_prompt(),
-            # max_output_tokens=8000,
             top_p=0.8,
+            # for thinking model, can get code from
+            # temperature=0.7,
+            # top_p=0.95,
+            # top_k=64,
+            # max_output_tokens=65536,
             safety_settings=GEMINI_SAFE_SETTINGS,
         ),
     )

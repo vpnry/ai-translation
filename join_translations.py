@@ -62,7 +62,7 @@ def escape_dot_li(text):
     return re.sub(r"^(\d+)\.", r"\1\.", text)
 
 
-def create_multilingual_md(source_file: str, num_translations: int = 1) -> None:
+def create_multilingual_md(source_file: str, num_translations: int = 3) -> None:
     """Create multilingual markdown from source and target files"""
     print(f"\n** Creating a markdown file with {num_translations}-translations...")
 

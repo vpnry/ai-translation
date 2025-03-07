@@ -14,15 +14,15 @@ def read_full_text(file_path):
         return file.read()
 
 
-def split_text_into_chunks(text, max_tokens=6000, model="gpt-3.5-turbo"):
+def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
     """
     Split text into chunks with XML tags while preserving paragraph breaks and natural segments.
     Each chunk will respect the max_tokens limit and maintain original text structure.
 
     Args:
         text (str): The input text to be split
-        max_tokens (int): Maximum number of tokens per chunk (default: 6000)
-        model (str): The model name to use for token counting (default: gpt-3.5-turbo).
+        max_tokens (int): Maximum number of tokens per chunk (default: 5000)
+        model (str): The model name to use for token counting (default: gpt-4o).
         some others: "gpt-4o"
 
     Returns:
@@ -163,15 +163,15 @@ def save_chunks(chunks: list, input_file: str):
 
 
 def process_directory(
-    dir_path: str, max_tokens: int = 6000, model: str = "gpt-3.5-turbo"
+    dir_path: str, max_tokens: int = 5000, model: str = "gpt-4o"
 ):
     """
     Process all .txt files in the specified directory.
 
     Args:
         dir_path (str): Path to the directory containing .txt files
-        max_tokens (int): Maximum tokens per chunk (default: 6000)
-        model (str): Model name for token counting (default: gpt-3.5-turbo)
+        max_tokens (int): Maximum tokens per chunk (default: 5000)
+        model (str): Model name for token counting (default: gpt-4o)
     """
     if not os.path.exists(dir_path):
         print(f"Error: Directory '{dir_path}' does not exist.")
@@ -216,14 +216,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=6000,  # sinhala can use 10000, pali 6000
-        help="Maximum tokens per chunk (default: 6000), can adjust according to your LLMs",
+        default=5000,  # sinhala can use 10000, pali 5000
+        help="Maximum tokens per chunk (default: 5000), can adjust according to your LLMs",
     )
     parser.add_argument(
         "--model",
         type=str,
-        default="gpt-3.5-turbo",
-        help="Model name for token counting (default: gpt-3.5-turbo)",
+        default="gpt-4o",
+        help="Model name for token counting (default: gpt-4o)",
     )
 
     args = parser.parse_args()

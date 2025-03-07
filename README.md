@@ -73,7 +73,7 @@ Adjust `--max-tokens` based on the LLM’s input limit.
 python3 token_chunk.py -f your_text_file.txt
 
 # Using --max-tokens 2000
-python3 token_chunk.py -f your_text_file.txt --max-tokens 2000
+python3 token_chunk.py -f your_text_file.txt --max-tokens 5000
 
 # Process all .txt files in a directory
 python3 token_chunk.py -d your_text_file_directory

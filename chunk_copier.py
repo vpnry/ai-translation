@@ -40,6 +40,33 @@ def extract_chunks(content: str) -> List[Tuple[int, str]]:
     return sorted(chunks)
 
 
+def chunk_info(chunk_text):
+    """
+    Extracts the first and last line IDs from a chunk of XML-like text.
+    """
+    # Find all <line id="..."> tags
+    matches = re.findall(r'<line id="(\d+)">', chunk_text)
+
+    total_lines = len(chunk_text.splitlines())
+    if matches:
+        first_id = int(matches[0])
+        last_id = int(matches[-1])
+        total_id = len(matches)
+        return {
+            "first_id": first_id,
+            "last_id": last_id,
+            "total_lines": total_lines,
+            "total_id": total_id,
+        }
+
+    return {
+        "first_id": None,
+        "last_id": None,
+        "total_lines": total_lines,
+        "total_id": None,
+    }
+
+
 def copy_chunks(
     system_prompt: str,
     chunks: List[Tuple[int, str]],
@@ -69,7 +96,6 @@ def copy_chunks(
     # Prepare the text to copy
     text_to_copy = system_prompt.strip() + "\n\n"
     for chunk_num, content in selected_chunks:
-        # Add the chunk tags back in the copied text
         text_to_copy += f"<chunk{chunk_num}>\n\n{content}\n\n</chunk{chunk_num}>\n\n"
 
     # Copy to clipboard
@@ -79,6 +105,12 @@ def copy_chunks(
     chunk_numbers = [chunk_num for chunk_num, _ in selected_chunks]
     print(text_to_copy)
     print(f"Copied chunks {chunk_numbers} to clipboard. File: {len(chunks)} chunks")
+
+    for chunk_num, chunk_text in selected_chunks:
+        chunk_text = f"<chunk{chunk_num}>\n\n{content}\n\n</chunk{chunk_num}>"
+        ifo = chunk_info(chunk_text)
+        print(f'Chunk{chunk_num}: {ifo["total_lines"]} lines. Total lines ID {ifo["total_id"]}: [{ifo["first_id"]}-{ifo["last_id"]}]', end=" ")
+    print("\n")
 
     # Open the specified website
     if website_url:
