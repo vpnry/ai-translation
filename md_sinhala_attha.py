@@ -48,8 +48,8 @@ def assign_ids_to_json(json_data):
             for footnote in page["pali"]["footnotes"]:
                 footnote["fid"] = f"{id_footer_pali}"
                 ## sometimes, only 1 of the lang has footnote
-                # so, use one id for footnote 
-                id_footer_pali += 1 
+                # so, use one id for footnote
+                id_footer_pali += 1
 
         # Process Sinhala footnotes
         if page["sinh"]["footnotes"]:
@@ -60,6 +60,78 @@ def assign_ids_to_json(json_data):
     return json_data
 
 
+def parse_line_for_id(line: str) -> tuple:
+    line = line.lstrip("#").strip()
+    if not line:
+        return None, None
+    if line.startswith("ID") and "=" in line:
+        parts = line.split("=", 1)
+        key = parts[0].strip()
+        value = parts[1].strip()
+        if key.startswith("ID") and key[2:].isdigit():
+            return key, value
+    # footnote
+    elif line.startswith("FID") and "=" in line:
+        parts = line.split("=", 1)
+        key = parts[0].strip()
+        value = parts[1].strip()
+        if key.startswith("FID") and key[3:].isdigit():
+            return key, value
+    return None, None
+
+
+def put_translation_to_id(
+    json_file_path: str,
+    trans_file: str,
+    out_dir="attha_sinh_json_eng",
+    lang_key: str = "sinh",
+):
+
+    trans_dict = {}
+    with open(trans_file, "r", encoding="utf-8") as file:
+        for line in file:
+            k, v = parse_line_for_id(line)
+            if k and v:
+                trans_dict[k] = f"Translated here: {v}"
+
+    with open(json_file_path, "r", encoding="utf-8") as file:
+        json_data = json.load(file)
+
+    for page in json_data["pages"]:
+        for entry in page[lang_key]["entries"]:
+            line = entry["text"].strip()
+            k, v = parse_line_for_id(line)
+            if k and v:
+                if k in trans_dict:
+                    entry["text"] = f"{k}={trans_dict[k]}"
+                else:
+                    print(
+                        f"---Error: {k} in {json_file_path} is not found in the translated file {trans_file}"
+                    )
+
+        # Process footnotes
+        if page[lang_key]["footnotes"]:
+            for footnote in page[lang_key]["footnotes"]:
+                if "fid" in footnote:
+                    k = f"FID{footnote['fid']}"
+                    if k in trans_dict:
+                        footnote["text"] = f"{k}={trans_dict[k]}"
+                    else:
+                        print(
+                            f"---Error: {k} in {json_file_path} is not found in the translated file {trans_file}"
+                        )
+
+    # save
+    output_json_path = os.path.join(
+        out_dir,
+        os.path.splitext(os.path.basename(json_file_path))[0] + ".json",
+    )
+
+    with open(output_json_path, "w", encoding="utf-8") as f:
+        json.dump(json_data, f, indent=2, ensure_ascii=False)
+    print(f"Added translations to {json_file_path}")
+
+
 def extract_sinh_to_markdown(json_file_path, output_directory):
     # Read JSON file
     with open(json_file_path, "r", encoding="utf-8") as file:
@@ -67,12 +139,13 @@ def extract_sinh_to_markdown(json_file_path, output_directory):
 
     # assign ID to each
     modified_json = assign_ids_to_json(input_json)
-    
+
     output_json_path = os.path.join(
-        "attha_sinh_json_id", os.path.splitext(os.path.basename(json_file_path))[0] + ".json"
+        "attha_sinh_json_id",
+        os.path.splitext(os.path.basename(json_file_path))[0] + ".json",
     )
 
-    with open(output_json_path, 'w', encoding='utf-8') as f:
+    with open(output_json_path, "w", encoding="utf-8") as f:
         json.dump(modified_json, f, indent=2, ensure_ascii=False)
 
     # use .txt to avoid auto numbering in markdown
@@ -94,18 +167,20 @@ def extract_sinh_to_markdown(json_file_path, output_directory):
                 # Process entries
                 for entry in page["sinh"]["entries"]:
                     # Handle headings
-                    if entry["type"] == "heading":
+                    if "level" in entry:
                         heading_level = get_heading(entry["level"])
-                        out_file.write(f"{heading_level} {entry['text']}\n\n")
-                    # Handle paragraphs
-                    elif entry["type"] == "paragraph":
-                        out_file.write(f"{entry['text']}\n\n")
+                        if "text" in entry:
+                            esc_text = entry["text"].replace("\n", " <br /> ")
+                            out_file.write(f"{heading_level} {esc_text}\n\n")
+                    elif "text" in entry:
+                        esc_text = entry["text"].replace("\n", " <br /> ")
+                        out_file.write(f"{esc_text}\n\n")
 
                 # Process footnotes if present
                 if "footnotes" in page["sinh"]:
                     for footnote in page["sinh"]["footnotes"]:
                         if footnote["type"] == "footnote":
-                            fid = footnote['fid']
+                            fid = footnote["fid"]
                             out_file.write(f"FID{fid}={footnote['text']}\n")
 
             # Add page separator
@@ -115,7 +190,8 @@ def extract_sinh_to_markdown(json_file_path, output_directory):
 def process_atthakatha_json_files(input_directory="attha_sinh_json"):
     output_directory = "attha_sinh_md_id"
     os.makedirs(output_directory, exist_ok=True)
-    os.makedirs('attha_sinh_json_id', exist_ok=True)
+    os.makedirs("attha_sinh_json_id", exist_ok=True)
+    os.makedirs("attha_sinh_json_eng", exist_ok=True)
 
     # Ensure the input directory exists
     if not os.path.exists(input_directory):
@@ -152,3 +228,4 @@ def main():
 if __name__ == "__main__":
     # main()
     process_atthakatha_json_files()
+    # put_translation_to_id("attha_sinh_json_id/atta-an-1-14-3.json", "attha_sinh_md_id/atta-an-1-14-3.txt")
