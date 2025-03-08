@@ -153,8 +153,8 @@ def save_chunks(chunks: list, input_file: str):
     output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
     output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
     create_english_md(output_translated_f1)
-    create_english_md(output_translated_f2)
-    create_english_md(output_translated_f3)
+    # create_english_md(output_translated_f2)
+    # create_english_md(output_translated_f3)
 
     print(f"\nTHERE ARE {len(chunks)} chunks!")
     print(
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=5000,  # sinhala can use 10000, pali 5000
+        default=5000, 
         help="Maximum tokens per chunk (default: 5000), can adjust according to your LLMs",
     )
     parser.add_argument(
