@@ -6,8 +6,7 @@ https://github.com/pathnirvana/tipitaka.lk/tree/master/public/static/text
 import json
 import os
 import sys
-from typing import Dict, Any, Union
-
+import re
 
 def get_heading(level) -> str:
     """Generates a heading string based on the 'level' in the entry.
@@ -24,6 +23,10 @@ def get_heading(level) -> str:
         print(f"Warning: 'level' value {level} is outside the valid range (1-5).")
         return ""
     return "#" * (6 - level)
+
+def remove_line_tags(text):
+  """Removes all <line id="{number}"> and </line> tags from a string."""
+  return re.sub(r'<line id="\d+">|</line>', '', text)
 
 
 def assign_ids_to_json(json_data):
@@ -61,6 +64,8 @@ def assign_ids_to_json(json_data):
 
 
 def parse_line_for_id(line: str) -> tuple:
+    line = line.strip() # important
+    line = remove_line_tags(line)
     line = line.lstrip("#").strip()
     if not line:
         return None, None
@@ -90,10 +95,13 @@ def put_translation_to_id(
     trans_dict = {}
     with open(trans_file, "r", encoding="utf-8") as file:
         for line in file:
+
             k, v = parse_line_for_id(line)
             if k and v:
-                trans_dict[k] = f"Translated here: {v}"
+                trans_dict[k] = f"{v}"
 
+    # print(trans_dict)
+    
     with open(json_file_path, "r", encoding="utf-8") as file:
         json_data = json.load(file)
 
@@ -227,5 +235,5 @@ def main():
 
 if __name__ == "__main__":
     # main()
-    process_atthakatha_json_files()
-    # put_translation_to_id("attha_sinh_json_id/atta-an-1-14-3.json", "attha_sinh_md_id/atta-an-1-14-3.txt")
+    # process_atthakatha_json_files()
+    put_translation_to_id("attha_sinh_json_id/atta-an-1-14-3.json", "attha_sinh_md_id/atta-an-1-14-3_36_chunks_20250308_211731_gemini-2.0-flash.xml")

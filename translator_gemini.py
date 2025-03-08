@@ -205,11 +205,14 @@ Started at: {timestamp}
                         f.flush()
 
                         log_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        log_message = f"Chunk {i}: is written at {log_time}. Took: {elapsed_time:.2f}s. Translated chars/input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
+                        log_message = f"Chunk {i}: is written at {log_time}. Took: {elapsed_time:.2f}s. Length translated chars/input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
                         print(log_message.strip())
                         log_f.write(log_message)
 
                     log_f.flush()
+            
+            log_f.write(f"Output saved to {output_file}")
+            log_f.flush()
 
         print(f"Translation completed. Output saved to {output_file}")
         print(f"Log saved to {log_file}")
