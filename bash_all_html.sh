@@ -28,7 +28,7 @@ python3 gen_tpo_html.py \
     --template pnry_tpo_html_template.html
 
 # Dvemātikāpāḷi
-TRAN=2
+TRAN=3
 python3 join_translations.py vinaya_dvematika_pali/dvematikapali_46_chunks.xml --translations "$TRAN"
 python3 gen_tpo_html.py \
     --md-file vinaya_dvematika_pali/dvematikapali_46_chunks_"$TRAN"_translations.md \

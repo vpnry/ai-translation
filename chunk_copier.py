@@ -188,6 +188,8 @@ def main():
                 print("Invalid input. Please enter a number or press Enter.")
                 continue
 
+        # hot reload prompt:)
+        system_prompt = load_file_content(system_prompt_path)
         last_copied_chunk = copy_chunks(
             system_prompt, chunks, start_chunk, chunks_per_copy, website_url
         )

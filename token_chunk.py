@@ -33,11 +33,11 @@ def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
     enc = tiktoken.encoding_for_model(model)
 
     # Define end marker with placeholder for chunk number
-    end_marker_template = "\n[END_OF_CHUNK_{chunk_num}_FOR_AI_TRANSLATION]\n"
+    # end_marker_template = "\n[END_OF_CHUNK_{chunk_num}_FOR_AI_TRANSLATION]\n"
 
     # We'll calculate end marker tokens for each chunk since the number length varies
-    def get_end_marker(chunk_num):
-        return end_marker_template.format(chunk_num=chunk_num)
+    # def get_end_marker(chunk_num):
+    #     return end_marker_template.format(chunk_num=chunk_num)
 
     # Split text into paragraphs while preserving empty lines
     paragraphs = []
@@ -69,18 +69,18 @@ def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
         paragraph_tokens = len(enc.encode(paragraph))
 
         # Calculate tokens for the XML tags and end marker for current chunk
-        current_end_marker = get_end_marker(chunk_number)
+        # current_end_marker = get_end_marker(chunk_number)
         chunk_tag_tokens = len(
             enc.encode(f"<chunk{chunk_number}></chunk{chunk_number}>")
         )
-        end_marker_tokens = len(enc.encode(current_end_marker))
+        # end_marker_tokens = len(enc.encode(current_end_marker))
 
         # Check if adding this paragraph would exceed the limit
         if (
             current_token_count
             + paragraph_tokens
             + chunk_tag_tokens
-            + end_marker_tokens
+            # + end_marker_tokens
             > max_tokens
             and current_chunk
         ):
@@ -90,7 +90,7 @@ def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
             chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
 
             chunks.append(
-                f"<chunk{chunk_number}>\n{chunk_text}{get_end_marker(chunk_number)}\n</chunk{chunk_number}>"
+                f"<chunk{chunk_number}>\n{chunk_text}\n</chunk{chunk_number}>"
             )
 
             # Reset for next chunk
@@ -113,7 +113,7 @@ def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
         chunk_text = re.sub(r"\n{3,}", "\n\n", chunk_text)
 
         chunks.append(
-            f"<chunk{chunk_number}>\n{chunk_text}{get_end_marker(chunk_number)}\n</chunk{chunk_number}>"
+            f"<chunk{chunk_number}>\n{chunk_text}\n</chunk{chunk_number}>"
         )
 
     return chunks

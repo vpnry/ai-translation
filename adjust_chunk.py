@@ -113,8 +113,3 @@ def re_id_in_source_chunk(source_file, outputfile):
     # Write the output file (assuming you want to write to a file)
     output_tree = ET.ElementTree(output_root)
     output_tree.write(outputfile, encoding="utf-8", xml_declaration=False)
-
-
-
-
-wrap_lines_in_chunk("./vinaya_sasanavataranaya/sasanavataranaya_60_chunks.xml", "./vinaya_sasanavataranaya/sasanavataranaya_60_chunks_translated_1.xml", "./vinaya_sasanavataranaya/a.xml")
