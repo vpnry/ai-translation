@@ -45,6 +45,8 @@ def assign_ids_to_json(json_data):
                     entry["text"] = f"SP{id_pali} = {entry['text'].strip()}"
                 else:
                     entry["text"] = f"SP{id_pali} = @@"
+            id_pali += 1
+            
 
         # Process Sinhala entries
         for entry in page["sinh"]["entries"]:
@@ -75,9 +77,8 @@ def assign_ids_to_json(json_data):
 
 def parse_line_for_id(line: str) -> tuple:
     line = line.strip()  # important
-
     line = remove_line_tags(line)
-    line = line.lstrip("#").strip()
+    line = line.strip().lstrip("#").strip()
 
     if not line:
         return None, None
@@ -236,7 +237,7 @@ def prepare_atthakatha_json_files(input_directory="attha_sinh_json"):
 
 
 def put_translation_json_files(
-    model="gemini-2.0-flash", input_directory="attha_sinh_md_id"
+    filter_pattern="_chunks_translated_1.xml", input_directory="attha_sinh_md_id"
 ):
     output_directory = "attha_sinh_json_eng"
     os.makedirs(output_directory, exist_ok=True)
@@ -248,21 +249,24 @@ def put_translation_json_files(
         return
 
     # Get all JSON files in the directory
-    translated_xml_files = [
-        f for f in os.listdir(input_directory) if f.endswith(f"{model}.xml")
+    translated_files = [
+        f for f in os.listdir(input_directory) if f.endswith(f"{filter_pattern}")
     ]
 
     # Process each JSON file
-    for n, tr_file in enumerate(translated_xml_files, 1):
-        parts = re.split(r"_\d+_chunks_", tr_file, 1)
+    for n, tr_file in enumerate(translated_files, 1):
+        parts = re.split(r"_\d+_chunks_translated", tr_file, 1)
+        if len(parts) != 2:
+            print(f"Filename issue, skipped: {tr_file}")
+            continue
         json_fn = f"{parts[0]}.json"
         json_id_path = os.path.join(sinh_json_id_dir, json_fn)
 
         trans_path = os.path.join(input_directory, tr_file)
         put_translation_to_id(json_id_path, trans_path)
-        print(f"{n}/{len(translated_xml_files)} Done: {tr_file}")
+        print(f"{n}/{len(translated_files)} Done: {tr_file}")
 
-    print(f"Processed {len(translated_xml_files)} JSON files.")
+    print(f"Processed {len(translated_files)} JSON files.")
 
 
 def main():
