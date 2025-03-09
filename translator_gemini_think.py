@@ -13,7 +13,7 @@ from prompt_toolkit.validation import Validator, ValidationError
 from chunk_copier import load_file_content, extract_chunks
 
 
-key_file = "./gemini_key_project_2.txt"
+key_file = "./gemini_key_project_1.txt"
 
 
 # Gemini safety settings

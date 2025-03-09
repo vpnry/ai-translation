@@ -126,7 +126,7 @@ def gemini_translate(chunk):
     return response.text
 
 
-def process_xml_file_with_regex(input_file, transno="translated_1"):
+def process_xml_file_with_regex(input_file, n_file, transno="translated_1"):
     try:
         # Check if file is already translated
         source_path = Path(input_file)
@@ -134,7 +134,7 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
 
         # Look for existing translations with the same base name and AI model
         existing_translations = list(
-            source_path.parent.glob(f"{base_name}_*_{AI_MODEL}.xml")
+            source_path.parent.glob(f"{base_name}_translated_1.xml")
         )
         if existing_translations:
             print(f"------> SKIPPING {input_file} - THERE IS A translated FILE here:")
@@ -155,8 +155,8 @@ def process_xml_file_with_regex(input_file, transno="translated_1"):
         # Create output file
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        output_file = source_path.parent / f"{base_name}_{timestamp}_{AI_MODEL}.xml"
-        log_file = source_path.parent / f"{base_name}_{timestamp}_{AI_MODEL}.log"
+        output_file = source_path.parent / f"{base_name}_translated_1.xml"
+        log_file = source_path.parent / f"{base_name}_translated_1.log"
 
         with open(output_file, "w", encoding="utf-8") as f, open(
             log_file, "w", encoding="utf-8"
@@ -183,7 +183,7 @@ Started at: {timestamp}
                 if input_chunk_text.strip():
                     input_chunk_text = input_chunk_text.strip()
 
-                    print(f"\nTranslating chunk {i}/{total_chunks}")
+                    print(f"\n{n_file}. Translating chunk {i}/{total_chunks}...")
 
                     start_time = time.time()
                     translated_text = gemini_translate(input_chunk_text)
@@ -205,7 +205,7 @@ Started at: {timestamp}
                         f.flush()
 
                         log_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        log_message = f"Chunk {i}: is written at {log_time}. Took: {elapsed_time:.2f}s. Length translated chars/input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
+                        log_message = f"Chunk {i}: written at {log_time}. Took: {elapsed_time:.2f}s. Len tr./input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
                         print(log_message.strip())
                         log_f.write(log_message)
 
@@ -221,8 +221,8 @@ Started at: {timestamp}
         print(f"Error processing file: {e}")
 
 
-def gemini_translator(input_xml: str):
-    process_xml_file_with_regex(input_xml)
+def gemini_translator(input_xml: str,  n_file: str):
+    process_xml_file_with_regex(input_xml, n_file)
 
 
 if __name__ == "__main__":

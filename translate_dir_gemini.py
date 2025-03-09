@@ -57,9 +57,10 @@ def process_files(directory=".", file_pattern="*_chunks.xml"):
     # Process each file
     for n, file_path in enumerate(matching_files, 1):
         try:
-            print(f"Processing file: {file_path}")
-            gemini_translator(os.path.join(directory, file_path))
-            print(f"{n}/{len(matching_files)}. Translated: {file_path}\n")
+            print(f"---------\nProcessing file: {file_path}")
+            n_file = f"File {n} of {len(matching_files)}"
+            gemini_translator(os.path.join(directory, file_path), n_file)
+            print(f"{n_file}. Translated: {file_path}\n")
 
         except Exception as e:
             print(f"Error processing {file_path}: {str(e)}")
