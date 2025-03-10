@@ -195,11 +195,11 @@ def add_toc(html_file_path, output_file_path=None):
             link.string = heading_text
 
             if "hs" in heading.get("class", []):
-                list_item["class"] = list_item.get("class", []) + ["stoc"]
+                list_item["class"] = ["toc_a", "stoc"] + list_item.get("class", [])
             elif "ht" in heading.get("class", []):
                 # Remove "ht" and add "ttoc"
                 current_classes = heading.get("class", [])
-                list_item["class"] = ["ttoc"] + [c for c in current_classes if c != "ht"]
+                list_item["class"] = ["toc_a", "ttoc"] + [c for c in current_classes if c != "ht"]
             else:
                 pass
 

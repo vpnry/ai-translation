@@ -205,7 +205,7 @@ Started at: {timestamp}
                         f.flush()
 
                         log_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        log_message = f"Chunk {i}: written at {log_time}. Took: {elapsed_time:.2f}s. Len tr./input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
+                        log_message = f"Chunk {i}: {log_time}. Took: {elapsed_time:.2f}s. Len tr./input chars: {len(translated_text)}/{len(input_chunk_text)}\n"
                         print(log_message.strip())
                         log_f.write(log_message)
 

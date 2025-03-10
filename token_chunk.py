@@ -47,7 +47,9 @@ def split_text_into_chunks(text, max_tokens=5000, model="gpt-4o"):
     for line in text.split("\n"):
         if line.strip():
             current_paragraph.append(
-                f'\n<line id="{line_counter}">{line.strip()}</line>'
+                # should have a space after <line id='id'> and before </line>
+                # reducing AI confusing 
+                f'\n<line id="{line_counter}"> {line.strip()} </line>'
             )
             line_counter += 1
         else:
@@ -152,7 +154,7 @@ def save_chunks(chunks: list, input_file: str):
     output_translated_f1 = f"{output_base_chunk}_translated_1.xml"
     output_translated_f2 = f"{output_base_chunk}_translated_2.xml"
     output_translated_f3 = f"{output_base_chunk}_translated_3.xml"
-    create_english_md(output_translated_f1)
+    # create_english_md(output_translated_f1)
     # create_english_md(output_translated_f2)
     # create_english_md(output_translated_f3)
 

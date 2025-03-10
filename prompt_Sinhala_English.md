@@ -39,5 +39,5 @@ Adhere to the following rules for translation:
 9. Never skip, merge, or modify any XML tags or line IDs.
 
 # Specific Instruction
-Your translation will be used in a printed book. The XML chunks provided below are in Sinhala and belong to the *Kaṅkhāvitaraṇī-aṭṭhakathā *, a commentary on the Vinaya. Translate them into English following the format and guidelines above:
+Your translation will be used in a printed book. The XML chunks provided below are in Sinhala and belong to a Buddhist commentary. Translate them into English following the format and guidelines above:
 

@@ -15,7 +15,7 @@ python3 gen_tpo_html.py \
     --output zzz_html_output/dvematikapali_pali_english.html \
     --translations "$TRAN" \
     --title "Dvemātikāpāḷi" \
-    --template pnry_tpo_html_template.html
+    --template vipassakarama_tpo_template.html
 
 
 echo "All HTML files have been generated."
