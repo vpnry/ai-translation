@@ -1,18 +1,20 @@
 """This script uses Google's Gemini AI to translate XML files with chunks of text."""
 
+from __future__ import annotations
+import time
+import re
+import argparse
+import random
+
+from datetime import datetime
+from pathlib import Path
+from ratelimit import limits, sleep_and_retry
+from functools import wraps
+
 from google import genai  # pip install google-genai
 from google.genai import types
 
-import time
-from datetime import datetime
-from ratelimit import limits, sleep_and_retry
-import re
-from pathlib import Path
-import argparse
-from functools import wraps
-import random
-
-GEMINI_API_PROJECT_KEY_FILE = "./gemini_key_project_1.txt"
+GEMINI_API_PROJECT_KEY_FILE:str = "./gemini_key_project_1.txt"
 AI_MODEL = "gemini-2.0-flash"
 
 CALLS_PER_MINUTE = 14
@@ -35,15 +37,21 @@ MAX_RETRIES = 8
 INITIAL_RETRY_DELAY = 10
 MAX_RETRY_DELAY = 1280
 
+client = False
 
-def read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY_FILE):
+def read_gemini_api_key(key_file: str = GEMINI_API_PROJECT_KEY_FILE) -> str:
     # get a (free) API key from here https://aistudio.google.com/apikey
-    print(f"Using key from: {key_file}")
+    print(f"\nReading key from: {key_file}")
     with open(key_file, "r") as file:
         return file.read().strip()
 
 
-client = genai.Client(api_key=read_gemini_api_key())
+def set_gemini_key_file(key_file):
+    global GEMINI_API_PROJECT_KEY_FILE, client
+    GEMINI_API_PROJECT_KEY_FILE = key_file
+    print(f"CLI user API key: {GEMINI_API_PROJECT_KEY_FILE}")
+    # update client
+    client = genai.Client(api_key=read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY_FILE))
 
 
 # Gemini safety settings
@@ -108,8 +116,12 @@ def retry_with_exponential_backoff(func):
 @sleep_and_retry
 @limits(calls=CALLS_PER_MINUTE, period=PERIOD)
 @retry_with_exponential_backoff
-def gemini_translate(chunk):
-    response = client.models.generate_content(
+def gemini_translate(chunk: str, key_file: str = GEMINI_API_PROJECT_KEY_FILE) -> str:
+    global client
+    if not client:
+        print("Init client...")
+        client = genai.Client(api_key=read_gemini_api_key(key_file=GEMINI_API_PROJECT_KEY_FILE))
+    response: str = client.models.generate_content(
         model=AI_MODEL,
         contents=f"{load_sytem_prompt()}\n{chunk}",
         config=types.GenerateContentConfig(
@@ -125,7 +137,7 @@ def gemini_translate(chunk):
     )
     return response.text
 
-
+# key_file is not used, just for the call in translate_dir_gemini
 def process_xml_file_with_regex(input_file, n_file, transno="translated_1"):
     try:
         # Check if file is already translated
@@ -172,10 +184,10 @@ Started at: {timestamp}
 </info>\n\n"""
             f.write(info_warning)
             # Write initial log info
-            log_f.write(f"Translation log for {input_file}\n")
+            log_f.write(f"Translation log for: {input_file}\n")
             log_f.write(f"Started at: {timestamp}\n")
             log_f.write(f"API Key file: {GEMINI_API_PROJECT_KEY_FILE}\n\n")
-            log_f.write(f"Model: {AI_MODEL}\n\n")
+            log_f.write(f"Used model: {AI_MODEL}\n\n")
 
             for i, chunk in enumerate(chunks_list, 1):
                 input_chunk_text = chunk.group(0)  # Full chunk with tags
@@ -210,7 +222,7 @@ Started at: {timestamp}
                         log_f.write(log_message)
 
                     log_f.flush()
-            
+
             log_f.write(f"Output saved to {output_file}")
             log_f.flush()
 
@@ -221,7 +233,7 @@ Started at: {timestamp}
         print(f"Error processing file: {e}")
 
 
-def gemini_translator(input_xml: str,  n_file: str):
+def gemini_translator(input_xml: str,  n_file: str = "1", key_file: str = GEMINI_API_PROJECT_KEY_FILE):
     process_xml_file_with_regex(input_xml, n_file)
 
 
@@ -242,6 +254,7 @@ if __name__ == "__main__":
         help="Path to the prompt file (default: ./prompt_Sinhala_English.md)",
     )
 
+
     args = parser.parse_args()
 
     # Validate if file exists
@@ -249,4 +262,4 @@ if __name__ == "__main__":
         print(f"Error: Input file '{args.input_file}' does not exist")
         exit(1)
 
-    gemini_translator(args.input_file)
+    gemini_translator(args.input_file, "1")

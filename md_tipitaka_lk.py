@@ -99,7 +99,7 @@ def parse_line_for_id(line: str):
             continue
         # Split once and validate
         parts = line.split(" = ", 1)
-        # Key has space 
+        # Key has space
         key = parts[0].strip()
         value = parts[1].strip()
 
@@ -107,45 +107,6 @@ def parse_line_for_id(line: str):
         if key.startswith(prefix) and key[len(prefix) :].strip().isdigit():
             return key, value
     return None, None
-
-
-# def parse_line_for_id2(line: str) -> tuple:
-#     line = line.strip()  # important
-#     line = remove_line_xml_tag(line)
-#     line = line.strip().lstrip("#").strip()
-
-#     if not line:
-#         return None, None
-#     # Pali
-#     # Trial and error: AI made mistakes for ID123 more than ID 123
-#     if re.match(r"^Pi \d+ = ", line):
-#         parts = line.split(" = ", 1)
-#         key = parts[0].strip()
-#         value = parts[1].strip()
-#         if key.startswith("Pi ") and key[3:].strip().isdigit():
-#             return key, value
-#     # Sinh
-#     if re.match(r"^Si \d+ = ", line):
-#         parts = line.split(" = ", 1)
-#         key = parts[0].strip()
-#         value = parts[1].strip()
-#         if key.startswith("Si ") and key[3:].strip().isdigit():
-#             return key, value
-#     # footnote pali
-#     elif re.match(r"^Fp \d+ = ", line):
-#         parts = line.split(" = ", 1)
-#         key = parts[0].strip()
-#         value = parts[1].strip()
-#         if key.startswith("Fp ") and key[3:].strip().isdigit():
-#             return key, value
-#     # footnote sinh
-#     elif re.match(r"^Fs \d+ = ", line):
-#         parts = line.split(" = ", 1)
-#         key = parts[0].strip()
-#         value = parts[1].strip()
-#         if key.startswith("Fs ") and key[3:].strip().isdigit():
-#             return key, value
-#     return None, None
 
 
 def put_translation_to_id(
@@ -162,10 +123,10 @@ def put_translation_to_id(
             k, v = parse_line_for_id(line)
             if k and v:
                 trans_dict[k] = f"{v}"
-    
+
     with open(json_file_path, "r", encoding="utf-8") as file:
         json_data = json.load(file)
-    
+
     has_not_found = False
     for page in json_data["pages"]:
         # only for removing empty pali ID
@@ -188,7 +149,7 @@ def put_translation_to_id(
                     if trans_dict[k].strip():
                         # remove ID
                         if trans_dict[k].strip().lower() == "@@":
-                            entry["text"] = ""  
+                            entry["text"] = ""
                         else:
                             entry["text"] = f"{k} = {trans_dict[k].strip()}"
                 else:
@@ -208,8 +169,9 @@ def put_translation_to_id(
                         footnote["text"] = f"{k} = {trans_dict[k]}"
                     else:
                         print(
-                        f"---NotFound: {k} in {trans_file} . Source has: {json_file_path} "
+                            f"---NotFound: {k} in {trans_file} . Source has: {json_file_path} "
                         )
+
                         has_not_found = True
 
     # save
@@ -221,7 +183,8 @@ def put_translation_to_id(
     with open(output_json_path, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
     # print(f"Added translations to {json_file_path}")
-    if has_not_found: print("\n")
+    if has_not_found:
+        print("\n")
 
 
 def extract_sinh_to_markdown(json_file_path, output_directory):
@@ -233,7 +196,7 @@ def extract_sinh_to_markdown(json_file_path, output_directory):
     modified_json = assign_ids_to_json(input_json)
 
     output_json_path = os.path.join(
-        "attha_sinh_json_id",
+        output_directory,
         os.path.splitext(os.path.basename(json_file_path))[0] + ".json",
     )
 
@@ -281,10 +244,11 @@ def extract_sinh_to_markdown(json_file_path, output_directory):
             out_file.write("\n")
 
 
-def prepare_atthakatha_json_files(input_directory="attha_sinh_json"):
-    output_directory = "attha_sinh_md_id"
+def prepare_atthakatha_json_files(
+    input_directory="attha_sinh_json", output_directory="attha_sinh_mdjson_id"
+):
     os.makedirs(output_directory, exist_ok=True)
-    os.makedirs("attha_sinh_json_id", exist_ok=True)
+    os.makedirs("attha_sinh_mdjson_id", exist_ok=True)
     os.makedirs("attha_sinh_json_eng", exist_ok=True)
 
     # Ensure the input directory exists
@@ -304,12 +268,12 @@ def prepare_atthakatha_json_files(input_directory="attha_sinh_json"):
     print(f"Processed {len(json_files)} JSON files.")
 
 
-def put_translation_json_files(
-    filter_pattern="_chunks_translated_1.xml", input_directory="attha_sinh_md_id"
+def prepare_mula_json_files(
+    input_directory="mula_sinh_json", output_directory="mula_sinh_mdjson_id"
 ):
-    output_directory = "attha_sinh_json_eng"
+
     os.makedirs(output_directory, exist_ok=True)
-    sinh_json_id_dir = "attha_sinh_json_id"
+    os.makedirs("mula_sinh_json_eng", exist_ok=True)
 
     # Ensure the input directory exists
     if not os.path.exists(input_directory):
@@ -317,8 +281,32 @@ def put_translation_json_files(
         return
 
     # Get all JSON files in the directory
+    json_files = [f for f in os.listdir(input_directory) if f.endswith(".json")]
+
+    # Process each JSON file
+    for n, json_file in enumerate(json_files, 1):
+        full_path = os.path.join(input_directory, json_file)
+        extract_sinh_to_markdown(full_path, output_directory)
+        print(f"{n}/{len(json_files)} converted: {json_file}")
+
+    print(f"Processed {len(json_files)} JSON files.")
+
+
+def put_translation_json_files(
+    filter_pattern="_chunks_translated_1.xml",
+    translated_dir="input",
+    output_directory="output",
+):
+    os.makedirs(output_directory, exist_ok=True)
+
+    # Ensure the input directory exists
+    if not os.path.exists(translated_dir):
+        print(f"Error: Directory '{translated_dir}' does not exist.")
+        return
+
+    # Get all JSON files in the directory
     translated_files = [
-        f for f in os.listdir(input_directory) if f.endswith(f"{filter_pattern}")
+        f for f in os.listdir(translated_dir) if f.endswith(f"{filter_pattern}")
     ]
 
     # Process each JSON file
@@ -328,10 +316,10 @@ def put_translation_json_files(
             print(f"Filename issue, skipped: {tr_file}")
             continue
         json_fn = f"{parts[0]}.json"
-        json_id_path = os.path.join(sinh_json_id_dir, json_fn)
+        json_id_path = os.path.join(translated_dir, json_fn)
 
-        trans_path = os.path.join(input_directory, tr_file)
-        put_translation_to_id(json_id_path, trans_path)
+        trans_path = os.path.join(translated_dir, tr_file)
+        put_translation_to_id(json_id_path, trans_path, output_directory)
         print(f"{n}/{len(translated_files)} Done: {tr_file}")
 
     print(f"Processed {len(translated_files)} JSON files.")
@@ -354,6 +342,13 @@ def main():
 
 if __name__ == "__main__":
     # main()
+    # prepare_mula_json_files()
+
+    put_translation_json_files(
+        translated_dir="mula_sinh_mdjson_id", output_directory="./mula_sinh_json_eng"
+    )
+
     # prepare_atthakatha_json_files()
-    put_translation_json_files()
+    # put_translation_json_files(translated_dir="attha_sinh_mdjson_id", output_directory = "attha_sinh_json_eng")
+
     # put_translation_to_id("attha_sinh_json_id/atta-an-1-14-3.json", "attha_sinh_md_id/atta-an-1-14-3_36_chunks_20250308_211731_gemini-2.0-flash.xml")
