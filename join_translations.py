@@ -99,15 +99,15 @@ def create_multilingual_md(source_file: str, num_translations: int = 3) -> None:
                 # Create heading ID based on text content, removing special chars and spaces
                 heading_text = source_text.strip().lstrip("#").strip()
 
-                heading_id = re.sub(
+                heading_id_url_friendly = re.sub(
                     r"[^a-zA-Z0-9]+", "-", unidecode(heading_text.lower()).lower()
                 ).strip("-")
 
                 # Add ID number to ensure uniqueness for same text
 
-                heading_id = f"{heading_id}-id{id_num}"
+                heading_id_url_friendly = f"{heading_id_url_friendly}-id{id_num}"
                 fo.write(
-                    f"<h{heading_num} id='{heading_id}' class='hs'>{escape_dot_li(heading_text)}</h{heading_num}>\n\n"
+                    f"<h{heading_num} id='{heading_id_url_friendly}' class='hs'>{escape_dot_li(heading_text)}</h{heading_num}>\n\n"
                 )
 
                 for x, trans in enumerate(translations, 1):
@@ -130,7 +130,8 @@ def create_multilingual_md(source_file: str, num_translations: int = 3) -> None:
                         f"<h{heading_num} id='{trans_h_id}' class='ht ht{x}'>{escape_dot_li(trans_text)}</h{heading_num}>\n\n"
                     )
             else:
-                fo.write(f"<p class='s1'>{escape_dot_li(source_text)}</p>\n\n")
+                # k\d+ is the ID for AI Assistant in Tipitakapali.org
+                fo.write(f"<p class='s1' id='k{id_num}'>{escape_dot_li(source_text)}</p>\n\n")
                 for i, trans in enumerate(translations, 1):
                     trans_t_i = trans.get(
                         id_num, f"[MISSING TRANSLATION in translated file {i}]"

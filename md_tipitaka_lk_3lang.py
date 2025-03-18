@@ -7,7 +7,6 @@ import json
 import os
 import sys
 import re
-import re
 
 
 def get_heading(level) -> str:
@@ -110,13 +109,20 @@ def parse_line_for_id(line: str):
 
 
 def put_translation_to_id(
-    json_file_path: str,
-    trans_file: str,
-    out_dir="attha_sinh_json_eng",
-    lang_key: str = "sinh",
+    json_file_path: str, trans_file: str, out_dir="output_", new_lang_key="engl"
 ):
+    """
+    Adds translations from a translation file to a JSON file, creating a new language section (engl).
+    Duplicates the "sinh" section and populates it with translations. "sinh" is not modified.
 
-    lang_key = lang_key.strip()
+    Args:
+        json_file_path (str): Path to the source JSON file.
+        trans_file (str): Path to the translation file (e.g., XML with <line id="..."></line>).
+        out_dir (str): Directory to save the modified JSON file.
+        new_lang_key (str): The key to use for the new language section (e.g., "engl").
+    """
+
+    new_lang_key = new_lang_key.strip()
     trans_dict = {}
     with open(trans_file, "r", encoding="utf-8") as file:
         for line in file:
@@ -140,38 +146,59 @@ def put_translation_to_id(
                 if pli == "@@":
                     entry["text"] = ""
 
-        # put Eng trans of Sinh
-        for entry in page[lang_key]["entries"]:
-            line = entry["text"].strip()
+        # Create a new language section (duplicate "sinh") if it doesn't exist
+        if new_lang_key not in page:
+            page[new_lang_key] = page["sinh"].copy()  # Duplicate "sinh"
+
+        # Initialize/reset entries in new_lang_key.
+        page[new_lang_key]["entries"] = []
+
+        # put id to new language, copy the source keys.
+        for entry in page["sinh"]["entries"]:
+            new_entry = entry.copy()
+            new_entry["text"] = ""
+            page[new_lang_key]["entries"].append(new_entry)
+
+        # put Eng trans to the new key
+        for entry_index, entry in enumerate(page[new_lang_key]["entries"]):
+            line = page["sinh"]["entries"][entry_index][
+                "text"
+            ].strip()  # take from source sinhala, same id.
             k, v = parse_line_for_id(line)
             if k and v:
-                if k in trans_dict:
-                    if trans_dict[k].strip():
-                        # remove ID
-                        if trans_dict[k].strip().lower() == "@@":
+                new_k = k  # use the same key as sinh
+                if new_k in trans_dict:
+                    if trans_dict[new_k].strip():
+                        if trans_dict[new_k].strip().lower() == "@@":
                             entry["text"] = ""
                         else:
-                            entry["text"] = f"{k} = {trans_dict[k].strip()}"
+                            entry["text"] = (
+                                f"{new_k} = {trans_dict[new_k].strip()}"  # No more id in the text.
+                            )
                 else:
                     print(
-                        f"---NotFound: {k} in {trans_file} . Source has: {json_file_path} "
+                        f"---NotFound: {new_k} in {trans_file} . Source has: {json_file_path} "
                     )
                     has_not_found = True
 
-        # Process footnotes
-        if page[lang_key]["footnotes"]:
-            footer_key = f"F{lang_key[0].lower()}"
-            for footnote in page[lang_key]["footnotes"]:
-                if footer_key in footnote:
-                    # key has a space
-                    k = f"{footer_key} {footnote[footer_key]}"
-                    if k in trans_dict:
-                        footnote["text"] = f"{k} = {trans_dict[k]}"
+        # Process footnotes, now "engl" have the exact same footnote
+        if "footnotes" in page["sinh"]:
+            page[new_lang_key]["footnotes"] = page["sinh"]["footnotes"].copy()
+
+        if page["sinh"]["footnotes"]:
+            for foot_index, footnote in enumerate(page[new_lang_key]["footnotes"]):
+                footer_key = "Fs"
+                if footer_key in page["sinh"]["footnotes"][foot_index]:
+                    k = page["sinh"]["footnotes"][foot_index][footer_key]
+                    key_in_trans = f"Fs {k}"  # use original key.
+                    if key_in_trans in trans_dict:
+                        footnote["text"] = (
+                            f"{key_in_trans} = {trans_dict[key_in_trans]}"
+                        )
                     else:
                         print(
-                            f"---NotFound: {k} in {trans_file} . Source has: {json_file_path} "
+                            f"---NotFound: {key_in_trans} in {trans_file} . Source has: {json_file_path} "
                         )
-
                         has_not_found = True
 
     # save
@@ -316,10 +343,10 @@ def put_translation_json_files(
             print(f"Filename issue, skipped: {tr_file}")
             continue
         json_fn = f"{parts[0]}.json"
-        json_id_path = os.path.join(translated_dir, json_fn)
+        json_id_file_path = os.path.join(translated_dir, json_fn)
 
-        trans_path = os.path.join(translated_dir, tr_file)
-        put_translation_to_id(json_id_path, trans_path, output_directory)
+        trans_file_path = os.path.join(translated_dir, tr_file)
+        put_translation_to_id(json_id_file_path, trans_file_path, output_directory)
         print(f"{n}/{len(translated_files)} Done: {tr_file}")
 
     print(f"Processed {len(translated_files)} JSON files.")
@@ -343,14 +370,18 @@ def main():
 if __name__ == "__main__":
     # main()
     # prepare_mula_json_files()
+
+    put_translation_json_files(
+        translated_dir="mula_sinh_mdjson_id",
+        output_directory="./mula_sinh_json_eng_3_cols",
+    )
+
+    put_translation_json_files(
+        translated_dir="./attha_sinh_mdjson_id",
+        output_directory="./attha_sinh_json_eng_3_cols",
+    )
+
     # prepare_atthakatha_json_files()
-
-    put_translation_json_files(
-        translated_dir="mula_sinh_mdjson_id", output_directory="./mula_sinh_json_eng"
-    )
-
-    put_translation_json_files(
-        translated_dir="attha_sinh_mdjson_id", output_directory="attha_sinh_json_eng"
-    )
+    # put_translation_json_files(translated_dir="attha_sinh_mdjson_id", output_directory = "attha_sinh_json_eng")
 
     # put_translation_to_id("attha_sinh_json_id/atta-an-1-14-3.json", "attha_sinh_md_id/atta-an-1-14-3_36_chunks_20250308_211731_gemini-2.0-flash.xml")

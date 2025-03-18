@@ -1,318 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
     <title>$FILE_HTML_TITLE_TAG</title>
-    <meta name="description" content="$FILE_HTML_DESCRIPTION">
+    <meta name="description" content="$FILE_HTML_DESCRIPTION" />
+
     <style>
-        body {
-            font-size: medium;
-            font-family: 'Noto Sans', 'DejaVu Sans', 'Times Ext Roman', 'Indic Times', 'Doulos SIL', Tahoma, 'Arial Unicode MS', Gentium;
-        }
+      :root {
+        --safe-area-inset-top: env(safe-area-inset-top, 25px);
+        --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-area-inset-left: env(safe-area-inset-left, 0px);
+        --safe-area-inset-right: env(safe-area-inset-right, 0px);
+      }
 
-        li.ttoc {
-            /* Removes the bullet point */
-            list-style-type: none;
-            border-left: none !important;
-        }
+      body {
+        font-size: medium;
+        font-family: "Noto Sans", "DejaVu Sans", "Times Ext Roman", "Indic Times", "Doulos SIL", Tahoma, "Arial Unicode MS", Gentium;
+        margin: 0 auto;
+        padding: calc(var(--safe-area-inset-top) + 20px) calc(var(--safe-area-inset-right) + 10px) calc(var(--safe-area-inset-bottom) + 10px) calc(var(--safe-area-inset-left) + 10px);
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
 
-        .stoc {
-            /* bold the source text heading in TOC */
-            font-weight: bolder;
-            background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
-        }
+      li.ttoc {
+        /* Removes the bullet point */
+        list-style-type: none;
+        border-left: none !important;
+      }
 
-        .s0,
-        .s1 {
-            text-align: left;
-            border-left: 8px solid #7c6154;
-            padding-left: 5px;
-            background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
-        }
+      .stoc {
+        /* bold the source text heading in TOC */
+        font-weight: bolder;
+        background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
+      }
 
-        .hs {
-            /* source text heading in page */
-            font-weight: bolder;
-            background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
-        }
+      .hs {
+        /* source text heading in page */
+        font-weight: bolder;
+        background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
+      }
 
-        .ht {
-            /* translated headings in page */
-            padding-left: 5px;
-            font-size: small;
-        }
+      .ht {
+        /* translated headings in page */
+        padding-left: 5px;
+        font-size: small;
+      }
 
-        .ht1 {
-            border-left: 5px solid #ce93d8;
-        }
+      .ht1 {
+        border-left: 5px solid #ce93d8;
+      }
 
-        .ht2 {
-            border-left: 5px solid #90caf9;
-        }
+      .ht2 {
+        border-left: 5px solid #90caf9;
+      }
 
-        .ht3 {
-            border-left: 5px solid #e57373;
-        }
+      .ht3 {
+        border-left: 5px solid #e57373;
+      }
 
-        .ht4 {
-            border-left: 5px solid #ffe082;
-        }
+      .ht4 {
+        border-left: 5px solid #ffe082;
+      }
 
-        .ht5 {
-            border-left: 5px solid #a5d6a7;
-        }
+      .ht5 {
+        border-left: 5px solid #a5d6a7;
+      }
 
-        .ht6 {
-            border-left: 5px solid #ffa700;
-        }
+      .ht6 {
+        border-left: 5px solid #ffa700;
+      }
 
-        .ht7 {
-            border-left: 5px solid #ff1493;
-        }
+      .ht7 {
+        border-left: 5px solid #ff1493;
+      }
 
-        .ht8 {
-            border-left: 5px solid #00ffff;
-        }
+      .ht8 {
+        border-left: 5px solid #00ffff;
+      }
 
-        .ht9 {
-            border-left: 5px solid #800080;
-        }
+      .ht9 {
+        border-left: 5px solid #800080;
+      }
 
-        .ht10 {
-            border-left: 5px solid #ffff00;
-        }
+      .ht10 {
+        border-left: 5px solid #ffff00;
+      }
 
-        .t1 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #ce93d8;
-            border-radius: 10px;
-        }
+      .s1 {
+        text-align: left;
+        border-left: 8px solid #7c6154;
+        padding-left: 5px;
+        background: linear-gradient(to right, transparent, rgba(160, 82, 45, 0.3), transparent);
+      }
 
-        .t2 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #90caf9;
-            border-radius: 10px;
-        }
+      .t1 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #ce93d8;
+        border-radius: 10px;
+      }
 
-        .t3 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #e57373;
-            border-radius: 10px;
-        }
+      .t2 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #90caf9;
+        border-radius: 10px;
+      }
 
-        .t4 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #ffe082;
-            border-radius: 10px;
-        }
+      .t3 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #e57373;
+        border-radius: 10px;
+      }
 
-        .t5 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #a5d6a7;
-            border-radius: 10px;
-        }
+      .t4 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #ffe082;
+        border-radius: 10px;
+      }
 
-        .t6 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #ffa700;
-            border-radius: 10px;
-        }
+      .t5 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #a5d6a7;
+        border-radius: 10px;
+      }
 
-        .t7 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #ff1493;
-            border-radius: 10px;
-        }
+      .t6 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #ffa700;
+        border-radius: 10px;
+      }
 
-        .t8 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #00ffff;
-            border-radius: 10px;
-        }
+      .t7 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #ff1493;
+        border-radius: 10px;
+      }
 
-        .t9 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #800080;
-            border-radius: 10px;
-        }
+      .t8 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #00ffff;
+        border-radius: 10px;
+      }
 
-        .t10 {
-            text-align: justify;
-            padding-left: 6px;
-            border-left: 5px solid #ffff00;
-        }
+      .t9 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #800080;
+        border-radius: 10px;
+      }
 
-        a {
-            text-decoration: none;
-        }
+      .t10 {
+        text-align: justify;
+        padding-left: 6px;
+        border-left: 5px solid #ffff00;
+      }
 
-        .hr_info {
-            border: none;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #8B4513, transparent);
-            margin: 15px 0;
-        }
+      a {
+        text-decoration: none;
+      }
 
-        .converter-loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .converter-loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #4a90e2;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .converter-loading-text {
-            position: absolute;
-            margin-top: 80px;
-            color: #666;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+      .hr_info {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #8b4513, transparent);
+        margin: 15px 0;
+      }
     </style>
     <link href="https://tipitakapali.org/web/tp.css" rel="stylesheet" />
+    <script src="https://tipitakapali.org/web/theme.js"></script>
     <script>
-        var currentScript2char = currentScript2char ? currentScript2char : localStorage.getItem("tipitakapali_org_paliScript") || "ro";
-
-        if (currentScript2char == "ro") {
-            const style = document.createElement("style");
-            style.textContent = "body{display:block;}";
-            document.head.appendChild(style);
+      function toggleTranslation(num) {
+        const checkbox = document.getElementById(`toggle_t${num}`);
+        // heading
+        const heading_el = document.getElementsByClassName(`ht${num}`);
+        for (let el of heading_el) {
+          el.style.display = checkbox.checked ? "block" : "none";
         }
 
-        function toggleTranslation(num) {
-            const checkbox = document.getElementById(`toggle_t${num}`);
-            // toggle heading
-            const heading_el = document.getElementsByClassName(`ht${num}`);
-            for (let el of heading_el) {
-                el.style.display = checkbox.checked ? 'block' : 'none';
-            }
-            // toggle para
-            const p_el = document.getElementsByClassName(`t${num}`);
-            for (let el of p_el) {
-                el.style.display = checkbox.checked ? 'block' : 'none';
-            }
+        // para
+        const p_el = document.getElementsByClassName(`t${num}`);
+        for (let el of p_el) {
+          el.style.display = checkbox.checked ? "block" : "none";
         }
+      }
     </script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div id="dictionary-res"></div>
-    <p id="floatingTocButton"> 📜 </p>
-    <div id="tocDivBox" style="display: none;"></div>
+    <p id="floatingTocButton">📜</p>
+    <div id="tocDivBox" style="display: none"></div>
 
+    <div style="border: 2px solid #8b4513; border-radius: 8px; padding: 20px; background: linear-gradient(to bottom, #fff8dc, #faebd7); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 20px auto; max-width: 800px">
+      <div style="color: #8b4513; text-align: center; margin-bottom: 15px; font-size: 28px; font-weight: bolder">$FILE_PAGE_TITLE</div>
 
-    <div
-        style="border: 2px solid #8B4513; border-radius: 8px; padding: 20px; background: linear-gradient(to bottom, #FFF8DC, #FAEBD7); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto; max-width: 800px;">
+      <div style="color: #8b4513; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold">$FILE_PAGE_SUBTITLE</div>
 
-        <div class="s1"
-            style="color: #8B4513; text-align: center; margin-bottom: 15px; font-size: 28px; font-weight: bolder;">
-            $FILE_PAGE_TITLE</div>
+      <hr class="hr_info" />
+      <p style="color: #dc3545; font-weight: bold; text-align: center; font-size: 16px; margin: 15px 0">WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.</p>
+      <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the original Pāḷi text for verification.</p>
 
-        <div style="color: #8B4513; text-align: center; margin-bottom: 15px;font-size: 18px; font-weight: bold;">
-            $FILE_PAGE_SUBTITLE</div>
+      <p>The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi passages.</p>
 
-        <hr class="hr_info">
-        <p style="color: #DC3545; font-weight: bold; text-align: center; font-size: 16px; margin: 15px 0;">
-            WARNING: THIS IS AN AI-TRANSLATED EXPERIMENT.</p>
-        <p>Please do not blindly trust the LLM output. LLMs can produce errors. If you are uncertain, refer to the
-            original Pāḷi text for verification.</p>
+      <hr class="hr_info" />
+      <p style="color: #444; font-size: 14px; font-family: monospace; margin: 8px 0">
+        - For the Table of Contents, please click on the 📜 icon in the left-hand corner.
+        <br />- Click on any word to pop up ONLINE dictionaries. <br />- Code files to assist with translation: <span style="color: #0077ff"><a href="https://github.com/vpnry/ai-translation" target="_blank">https://github.com/vpnry/ai-translation</a></span>
+      </p>
+      <hr class="hr_info" />
+      <p style="margin-bottom: 10px; font-weight: bold; color: #176bf2">Hide|Show Translations:</p>
+      $TRANSLATIONS_TOGGLE
 
-        <p>The main purpose of this page is to facilitate quick searches using English keywords to locate relevant Pāḷi
-            passages.</p>
+      <hr class="hr_info" />
 
-        <hr class="hr_info">
-        <p style="color: #444; font-size: 14px; font-family: monospace; margin: 8px 0;">
-            - For the Table of Contents, please click on the 📜 icon in the left-hand corner.
-            <br>- Click on any word to pop up ONLINE dictionaries.
-            <br>- Code files to assist with translation: <span style="color: #0077ff;"><a
-                    href="https://github.com/vpnry/ai-translation"
-                    target="_blank">https://github.com/vpnry/ai-translation</a></span>
-        </p>
-        <hr class="hr_info">
-        <div style="text-align:left;">
-            <!-- root_button is just to escape click popup -->
-            <p class="root_button" style="display:block;color:midnightblue" ; id="buildPaliScriptMenu">
-                <label class="root_button" for=uSelectScript>Pāḷi display script</label>
-                <select class="root_button" id=uSelectScript name=uSelectScript>
-                    <option disabled="" value="">--Please choose an option--</option>
-                    <option class="root_button" value=ro>Roman - Roman</option>
-                    <option class="root_button" value=si>Sinhala - සිංහල</option>
-                    <option class="root_button" value=my>Myanmar - ဗမာစာ</option>
-                    <option class="root_button" value=hi>Devanagari - हिन्दी</option>
-                    <option class="root_button" value=thai>Thai - ไทย</option>
-                    <option class="root_button" value=laos>Laos - ລາວ</option>
-                    <option class="root_button" value=km>Khmer - ភាសាខ្មែរ</option>
-                    <option class="root_button" value=beng>Bengali - বাংলা</option>
-                    <option class="root_button" value=gurm>Gurmukhi - ਗੁਰਮੁਖੀ</option>
-                    <option class="root_button" value=guja>Gujarati - ગુજરાતી</option>
-                    <option class="root_button" value=telu>Telugu - తెలుగు</option>
-                    <option class="root_button" value=kann>Kannada - ಕನ್ನಡ</option>
-                    <option class="root_button" value=mala>Malayalam - മലയാളം</option>
-                    <option class="root_button" value=tham>Tai Tham - Tai Tham LN</option>
-                    <option class="root_button" value=brah>Brahmi - Brāhmī</option>
-                    <option class="root_button" value=tibt>Tibetan - བོད་སྐད།</option>
-                    <option class="root_button" value=cyrl>Cyrillic - кириллица</option>
-                </select>
-            </p>
-        </div>
+      <p style="color: #444; font-size: 14px; margin: 8px 0" class="s1">Pāḷi text: <a href="https://tipitakapali.org" target="_blank">https://tipitakapali.org</a> (Feb 2025)</p>
+      $TRANSLATIONS_ORDER
 
-        <p style="margin-bottom: 10px; font-weight: bold; color:#176bf2">Hide|Show Translations:</p>
-        $TRANSLATIONS_TOGGLE
+      <hr class="hr_info" />
 
-        <hr class="hr_info">
-
-        <p style="color: #444; font-size: 14px; margin: 8px 0;" class="s0">Source text: <a
-                href="https://example.com" target="_blank">https://example.com</a> (DD MM YYYY)</p>
-        $TRANSLATIONS_ORDER
-
-        <hr class="hr_info">
-
-        <p style="color: #6d6c6c; font-family: monospace; font-size: 14px; margin: 8px 0;">$FILE_LAST_MODIFIED</p>
+      <p style="color: #6d6c6c; font-family: monospace; font-size: 14px; margin: 8px 0">$FILE_LAST_MODIFIED</p>
     </div>
 
-
-
     $FILE_HTML
+
     <script defer src="https://tipitakapali.org/web/paliscriptconverter_edited.js"></script>
     <script defer src="https://tipitakapali.org/web/handleClick.js"></script>
     <script defer src="https://tipitakapali.org/web/renderer.js"></script>
-    <!-- https://vipassakarama.tipitakapali.org/exp/handleScripts.js -->
-    <script defer src="handleScripts.js"></script>
-</body>
-
+  </body>
 </html>

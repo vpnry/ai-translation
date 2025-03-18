@@ -5,15 +5,15 @@ mkdir -p zzz_html_output
 # Run each command sequentially, Vipassakarama will list on the web by date modified
 # Thus ordered them here accordingly
 
-# TRAN=2
-# python3 join_translations.py vinaya_sasanavataranaya/sasanavataranaya_60_chunks.xml --translations "$TRAN"
+TRAN=2
+python3 join_translations.py vinaya_sasanavataranaya/sasanavataranaya_60_chunks.xml --translations "$TRAN"
 
-# python3 gen_tpo_html.py \
-#     --md-file vinaya_sasanavataranaya/sasanavataranaya_60_chunks_"$TRAN"_translations.md \
-#     --output vinaya_sasanavataranaya/sasanavataranaya_sinh_english.html \
-#     --translations "$TRAN" \
-#     --title "Sāsanāvataraṇaya" \
-#     --template vinaya_sasanavataranaya/template.html
+python3 gen_tpo_html.py \
+    --md-file vinaya_sasanavataranaya/sasanavataranaya_60_chunks_"$TRAN"_translations.md \
+    --output vinaya_sasanavataranaya/sasanavataranaya_sinh_english.html \
+    --translations "$TRAN" \
+    --title "Sāsanāvataraṇaya" \
+    --template vinaya_sasanavataranaya/template.html
 
 
 # Vinayasaṅgaha-Aṭṭhakathā
